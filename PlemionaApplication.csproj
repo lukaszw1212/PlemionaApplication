@@ -6,4 +6,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Models\Budynek.cs" />
+    <Compile Remove="Models\Farma.cs" />
+    <Compile Remove="Models\KopalniaKamienia.cs" />
+    <Compile Remove="Models\KopalniaZelaza.cs" />
+    <Compile Remove="Models\Koszary.cs" />
+    <Compile Remove="Models\MuryObronne.cs" />
+    <Compile Remove="Models\Ratusz.cs" />
+    <Compile Remove="Models\Silos.cs" />
+    <Compile Remove="Models\Stajnia.cs" />
+    <Compile Remove="Models\Tartak.cs" />
+    <Compile Remove="Models\Zbrojownia.cs" />
+  </ItemGroup>
+
 </Project>
