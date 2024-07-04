@@ -28,10 +28,5 @@ namespace MiniProjekt
         {
             Cost = Math.Round((1 / Math.Sqrt(Level)),2);
         }
-
-        public override string ToString()
-        {
-            return base.ToString() + $"Cost: {Cost}";
-        }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MiniProjekt.Enumarable;
 
 namespace MiniProjekt
 {
@@ -30,6 +29,9 @@ namespace MiniProjekt
             Damage = (int)(Damage * 1.2);
             PhysicalResistance = (int)(PhysicalResistance * 1.25);
             RangeResistance = (int)(RangeResistance * 1.25);
+        }
+        public Kamikadze() : base(1, "Kamikadze", 10, 10, 0.5, Enumerable.Damage.Destruction, 50, 2, 8)
+        {
         }
     }
 }

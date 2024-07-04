@@ -34,9 +34,5 @@ namespace MiniProjekt
             MaxStonePerTime = 500 + (Level - 1) * 100;
             Time = 35 - (Level - 1) * 2;
         }
-        public override string ToString()
-        {
-            return base.ToString() + $"GenerateStonePerTime: {GenerateStonePerTime}\n";
-        }
     }
 }

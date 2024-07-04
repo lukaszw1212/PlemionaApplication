@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using MiniProjekt.Enumarable;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using MiniProjekt.Enumerable;
 
 namespace MiniProjekt
 {
     public abstract class Entity
     {
+        public int Id { get; set; }
         public virtual int Level { get; set; }
+        [Required]
 
         public string Name { get; set; }
         public int CurrentHP { get; set; }
@@ -22,17 +18,21 @@ namespace MiniProjekt
         public int Damage { get; set; }
         public int PhysicalResistance { get; set; }
         public int RangeResistance { get; set; }
+        public int VillageId { get; set; }
 
-        public override string ToString()
+        [ForeignKey("VillageId")]
+        public Village Village { get; set; }
+        protected Entity(int level, string name, int currentHp, int maxHp, double attackSpeed, Damage damageType, int damage, int physicalResistance, int rangeResistance)
         {
-            return $"Name: {Name} ;" +
-                $"Level: {Level} ;"+
-                $"MaxHP: {MaxHP} ;" +
-                $"AttackSpeed: {AttackSpeed} ;" +
-                $"DamageType: {DamageType} ;" +
-                $"Damage: {Damage} ;" +
-                $"PhysicalResistance: {PhysicalResistance} ;" +
-                $"RangeResistance: {AttackSpeed} ;";
+            Level = level;
+            Name = name;
+            CurrentHP = currentHp;
+            MaxHP = maxHp;
+            AttackSpeed = attackSpeed;
+            DamageType = damageType;
+            Damage = damage;
+            PhysicalResistance = physicalResistance;
+            RangeResistance = rangeResistance;
         }
     }
   

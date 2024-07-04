@@ -33,9 +33,6 @@ namespace MiniProjekt
             MaxFarmPerTime = 500 + (Level - 1) * 100;
             Time = 40 - (Level - 1) * 3;
         }
-        public override string ToString()
-        {
-            return base.ToString() + $"GenerateWheatPerTime: {GenerateWheatPerTime}\n";
-        }
+
     }
 }

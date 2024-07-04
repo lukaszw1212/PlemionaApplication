@@ -31,10 +31,5 @@ namespace MiniProjekt
             MaxHorses = 2 + (Level - 1) * 2;
         }
 
-        public override string ToString()
-        {
-            return base.ToString() + $"CurrentHorses: {CurrentHorses}\n" +
-                $"MaxHorses: {MaxHorses}\n";
-        }
     }
 }

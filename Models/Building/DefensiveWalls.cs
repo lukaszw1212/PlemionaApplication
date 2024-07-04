@@ -30,10 +30,5 @@ namespace MiniProjekt
         {
             MaxDefensiveValue = 10 + (Level - 1) * 10;
         }
-        public override string ToString()
-        {
-            return base.ToString() + $"DefensiveValue: {DefensiveValue}\n" +
-                $"MaxDefensiveValue: {MaxDefensiveValue}";
-        }
     }
 }

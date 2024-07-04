@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MiniProjekt.Enumarable;
 
 namespace MiniProjekt
 {
@@ -30,6 +29,9 @@ namespace MiniProjekt
             Damage = (int)(Damage * 1.2);
             PhysicalResistance = (int)(PhysicalResistance * 1.25);
             RangeResistance = (int)(RangeResistance * 1.25);
+        }
+        public Warrior() : base(1, "Warrior", 25, 25, 1, Enumerable.Damage.Physical, 8, 5, 3)
+        {
         }
     }
 }

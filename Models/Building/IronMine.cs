@@ -33,9 +33,5 @@ namespace MiniProjekt
             MaxIronPerTime = 300 + (Level - 1) * 100;
             Time = 55 - (Level - 1) * 3;
         }
-        public override string ToString()
-        {
-            return base.ToString() + $"GenerateIronPerTime: {GenerateIronPerTime}\n";
-        }
     }
 }

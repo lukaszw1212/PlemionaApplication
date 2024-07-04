@@ -32,9 +32,6 @@ namespace MiniProjekt
             MaxWoodPerTime = 500 + (Level - 1) * 100;
             Time = 30 - (Level - 1) * 2;
         }
-        public override string ToString()
-        {
-            return base.ToString() + $"GenerateWoodPerTime: {GenerateWoodPerTime}\n";
-        }
+
     }
 }

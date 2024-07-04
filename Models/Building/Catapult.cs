@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MiniProjekt.Enumarable;
+using MiniProjekt;
 
-namespace MiniProjekt
+namespace PlemionaApplication.Models.Building
 {
-    public class Catapult:Entity
+    public class Catapult : Entity
     {
         private int level = 1;
         public override int Level
@@ -30,6 +30,9 @@ namespace MiniProjekt
             Damage = (int)(Damage * 1.2);
             PhysicalResistance = (int)(PhysicalResistance * 1.25);
             RangeResistance = (int)(RangeResistance * 1.25);
+        }
+        public Catapult() : base(1, "Catapult", 20, 20, 0.2, MiniProjekt.Enumerable.Damage.Range, 30, 1, 8)
+        {
         }
     }
 }

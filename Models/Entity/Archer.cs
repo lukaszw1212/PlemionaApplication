@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
-using MiniProjekt.Enumarable;
+using MiniProjekt.Enumerable;
 
 namespace MiniProjekt
 {
@@ -32,6 +32,11 @@ namespace MiniProjekt
             PhysicalResistance = (int)(PhysicalResistance * 1.25);
             RangeResistance = (int)(RangeResistance * 1.25);
         }
-       
+
+        public Archer() : base(1, "Archer", 10, 10, 1.3, Enumerable.Damage.Range, 5, 2, 2)
+        {
+
+        }
+
     }
 }

@@ -38,11 +38,5 @@ namespace MiniProjekt
             Time = 20 - (Level - 1) * 2;
         }
 
-        public override string ToString()
-        {
-            return base.ToString() + $"MaxBuildingLevel: {MaxBuildingLevel};" +
-                $"GenerateGoldPerTime: {GenerateGoldPerTime};" +
-                $"MaxGoldPerTime: {MaxGoldPerTime};";
-        }
     }
 }

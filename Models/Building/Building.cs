@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniProjekt
 {
     public abstract class Building
     {
+        public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public virtual int Level { get; set; }
+        public int VillageId { get; set; }
 
-        public override string ToString()
-        {
-            return $"Name: {Name};" +
-                $"Level: {Level};";
-        }
+        [ForeignKey("VillageId")]
+        public Village Village { get; set; }
     }
 }
