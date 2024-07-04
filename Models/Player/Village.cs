@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MiniProjekt
@@ -12,12 +13,6 @@ namespace MiniProjekt
         public List<Building> Buildings = new List<Building>();
         public List<Entity> Entities = new List<Entity>();
         public static int Slots = 12;
-
-        public Village(string name)
-        {
-            Name = name;
-            Buildings.Add(new TownHall("Ratusz", 1));
-        }
 
         public override string ToString()
         {

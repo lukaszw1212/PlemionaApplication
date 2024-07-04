@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MiniProjekt
@@ -17,41 +18,10 @@ namespace MiniProjekt
         public List<Village> Villages { get; set; }
         public event PlayerExpAction OnExpGained;
         public event PlayerAction OnLvlGained;
-        public Player(string Name, int Level, int CurrentExperience, List<Resource> resources, Fraction fraction, List<Village> villages)
-        {
-            this.Name = Name;
-            this.Level = Level;
-            this.CurrentExperience = CurrentExperience;
-            this.Resources = resources;
-            this.Fraction = fraction;
-            this.Villages = villages;
-        }
-
-        public Player(string Name)
-        {
-            this.Name = Name;
-            Level = 1;
-            CurrentExperience = 0;
-            Resources =
-            [
-                new Wood("Wood",0),
-                new Iron("Iron", 0),
-                new Stone("Stone", 0),
-                new Wheat("Wheat", 0),
-                new Gold("Gold", 100),
-            ];
-            Villages = new List<Village>();
-            if(Name.EndsWith('a')|| Name.EndsWith('A'))
-            {
-                Villages.Add(new Village("Wioska " + Name.Substring(0, Name.Length - 1) + "y"));
-            }
-            else
-            {
-                Villages.Add(new Village("Wioska " + Name + "a"));
-
-            }
-            this.Fraction = null;
-        }
+        public event PlayerAction OnEntitesAdded;
+        public event PlayerAction OnUpgrade;
+        public event PlayerAction OnBuild;
+        public event PlayerAction OnEntityUpgrade;
         public void AddExp(int exp)
         {
             CurrentExperience += exp;
@@ -97,6 +67,43 @@ namespace MiniProjekt
                     playerResource.Amount -= required.Amount; 
                 }
             }
+            OnBuild?.Invoke(this);
+        }
+        public void afterEntitesRecruited(List<Resource> requiredResources)
+        {
+            foreach (var required in requiredResources)
+            {
+                var playerResource = Resources.FirstOrDefault(r => r.Name == required.Name);
+                if (playerResource != null)
+                {
+                    playerResource.Amount -= required.Amount;
+                }
+            }
+            OnEntitesAdded?.Invoke(this);
+        }
+        public void afterUpgrade(List<Resource> requiredResources)
+        {
+            foreach (var required in requiredResources)
+            {
+                var playerResource = Resources.FirstOrDefault(r => r.Name == required.Name);
+                if (playerResource != null)
+                {
+                    playerResource.Amount -= required.Amount;
+                }
+            }
+            OnUpgrade?.Invoke(this);
+        }
+        public void afterEntityUpgrade(List<Resource> requiredResources)
+        {
+            foreach (var required in requiredResources)
+            {
+                var playerResource = Resources.FirstOrDefault(r => r.Name == required.Name);
+                if (playerResource != null)
+                {
+                    playerResource.Amount -= required.Amount;
+                }
+            }
+            OnEntityUpgrade?.Invoke(this);
         }
         public override string ToString()
         {

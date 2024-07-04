@@ -8,25 +8,28 @@ namespace MiniProjekt
 {
     public class DefensiveWalls:Building
     {
+        private int level = 1;
+        public override int Level
+        {
+            get => level;
+            set
+            {
+                if (value <= MaxBuildingLevel)
+                {
+                    level = value;
+                    UpdateProperties();
+                }
+            }
+        }
         public int DefensiveValue { get; set; }
 
         public int MaxDefensiveValue { get; set; }
+        public int MaxBuildingLevel { get; set; }
 
-        public DefensiveWalls(string Name, int Level, int DefensiveValue, int MaxDefensiveValue):base(Name, Level)
+        private void UpdateProperties()
         {
-            this.DefensiveValue = DefensiveValue;
-            this.MaxDefensiveValue=MaxDefensiveValue;
+            MaxDefensiveValue = 10 + (Level - 1) * 10;
         }
-        public DefensiveWalls(string Name, int Level) : base(Name, Level)
-        {
-            this.DefensiveValue = 10;
-            this.MaxDefensiveValue = 10;
-        }
-        public DefensiveWalls() : base() {
-            this.DefensiveValue = 0;
-            this.MaxDefensiveValue = 0;
-        }
-
         public override string ToString()
         {
             return base.ToString() + $"DefensiveValue: {DefensiveValue}\n" +
