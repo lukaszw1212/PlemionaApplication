@@ -1,33 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MiniProjekt.Enumarable;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using MiniProjekt.Enumerable;
 
 namespace MiniProjekt
 {
     public abstract class Entity
     {
-        private int level;
+        public int Id { get; set; }
+        public virtual int Level { get; set; }
+        [Required]
 
-        public int Level
-        {
-            get { return level;}
-            set
-            {
-                if (level > 1)
-                {
-                    MaxHP = (int)(MaxHP * 1.15);
-                    CurrentHP = MaxHP;
-                    AttackSpeed = (int)(AttackSpeed * 1.3);
-                    Damage = (int)(Damage * 1.2);
-                    PhysicalResistance = (int)(PhysicalResistance * 1.25);
-                    RangeResistance = (int)(RangeResistance * 1.25);
-                }
-            }
-        }
-
+        public string Name { get; set; }
         public int CurrentHP { get; set; }
         public int MaxHP { get; set; }
         public double AttackSpeed { get; set; }
@@ -35,14 +18,14 @@ namespace MiniProjekt
         public int Damage { get; set; }
         public int PhysicalResistance { get; set; }
         public int RangeResistance { get; set; }
+        public int VillageId { get; set; }
 
-        protected Entity()
-        {
-
-        }
-        protected Entity(int level, int currentHp, int maxHp, double attackSpeed, Damage damageType, int damage, int physicalResistance, int rangeResistance)
+        [ForeignKey("VillageId")]
+        public Village Village { get; set; }
+        protected Entity(int level, string name, int currentHp, int maxHp, double attackSpeed, Damage damageType, int damage, int physicalResistance, int rangeResistance)
         {
             Level = level;
+            Name = name;
             CurrentHP = currentHp;
             MaxHP = maxHp;
             AttackSpeed = attackSpeed;
@@ -52,4 +35,5 @@ namespace MiniProjekt
             RangeResistance = rangeResistance;
         }
     }
+  
 }

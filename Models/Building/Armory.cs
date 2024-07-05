@@ -8,26 +8,26 @@ namespace MiniProjekt
 {
     public class Armory:Building
     {
-        List<Entity> EntitiesLevel;
-
-        public Armory(string Name, int Level):base(Name, Level)
+        private int level = 1;
+        public override int Level
         {
-            EntitiesLevel = new List<Entity>();
-        }
-
-        public Armory():base()
-        {
-            EntitiesLevel = new List<Entity>();
-        }
-
-        public override string ToString()
-        {
-            string temp = "";
-            foreach (Entity entity in EntitiesLevel)
+            get => level;
+            set
             {
-                temp += entity.ToString() + '\n';
+                if (value <= MaxBuildingLevel)
+                {
+                    level = value;
+                    UpdateProperties();
+                }
             }
-            return base.ToString() + temp + '\n';
         }
+        public double Cost { get; set; }
+        public int MaxBuildingLevel { get; set; }
+
+        private void UpdateProperties()
+        {
+            Cost = Math.Round((1 / Math.Sqrt(Level)), 2);
+        }
+
     }
 }

@@ -8,26 +8,28 @@ namespace MiniProjekt
 {
     public class HorseStable:Building
     {
+        private int level = 1;
+        public override int Level
+        {
+            get => level;
+            set
+            {
+                if (value <= MaxBuildingLevel)
+                {
+                    level = value;
+                    UpdateProperties();
+                }
+            }
+        }
         public int CurrentHorses { get; set; }
 
         public int MaxHorses { get; set; }
+        public int MaxBuildingLevel { get; set; }
 
-        public HorseStable(string Name, int Level):base(Name, Level) 
+        private void UpdateProperties()
         {
-            this.CurrentHorses = 0;
-            this.MaxHorses = 2;
+            MaxHorses = 2 + (Level - 1) * 2;
         }
 
-        public HorseStable() : base()
-        {
-            this.CurrentHorses = 0;
-            this.MaxHorses = 0;
-        }
-
-        public override string ToString()
-        {
-            return base.ToString() + $"CurrentHorses: {CurrentHorses}\n" +
-                $"MaxHorses: {MaxHorses}\n";
-        }
     }
 }

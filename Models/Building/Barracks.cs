@@ -8,21 +8,25 @@ namespace MiniProjekt
 {
     public class Barracks:Building
     {
-        public int MaxEntity { get; set; }
-
-        public Barracks(string Name, int Level): base(Name, Level)
+        private int level = 1;
+        public override int Level
         {
-            this.MaxEntity = 40;
+            get => level;
+            set
+            {
+                if (value <= MaxBuildingLevel)
+                {
+                    level = value;
+                    UpdateProperties();
+                }
+            }
         }
+        public double Cost { get; set; }
+        public int MaxBuildingLevel { get; set; }
 
-        public Barracks() : base()
+        private void UpdateProperties()
         {
-            this.MaxEntity = 0;
-        }
-
-        public override string ToString()
-        {
-            return base.ToString() + $"MaxEntity: {MaxEntity}";
+            Cost = Math.Round((1 / Math.Sqrt(Level)),2);
         }
     }
 }
