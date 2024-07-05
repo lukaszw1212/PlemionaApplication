@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using PlemionaApplication.Data;
 namespace PlemionaApplication
 {
     public class Program
@@ -5,10 +8,11 @@ namespace PlemionaApplication
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.Services.AddDbContext<PlemionaApplicationContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("PlemionaApplicationContext") ?? throw new InvalidOperationException("Connection string 'PlemionaApplicationContext' not found.")));
+           
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
-
+            builder.Services.AddControllersWithViews();            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -31,6 +35,8 @@ namespace PlemionaApplication
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+
+
         }
     }
 }
