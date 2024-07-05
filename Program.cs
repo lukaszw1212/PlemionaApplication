@@ -11,8 +11,11 @@ namespace PlemionaApplication
             builder.Services.AddDbContext<PlemionaApplicationContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("PlemionaApplicationContext") ?? throw new InvalidOperationException("Connection string 'PlemionaApplicationContext' not found.")));
 <<<<<<< HEAD
+<<<<<<< HEAD
            
 =======
+=======
+>>>>>>> 152dddba05b2968febda3e3864ac705d596c437a
 
 >>>>>>> 152dddba05b2968febda3e3864ac705d596c437a
             // Add services to the container.
