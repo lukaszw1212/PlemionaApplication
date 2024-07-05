@@ -21,8 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-<<<<<<< HEAD
-<<<<<<< HEAD
     <PackageReference Include="Microsoft.AspNetCore.Datasync.InMemory" Version="6.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.6" />
@@ -30,30 +28,13 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
-=======
-=======
->>>>>>> 152dddba05b2968febda3e3864ac705d596c437a
-    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-<<<<<<< HEAD
->>>>>>> 152dddba05b2968febda3e3864ac705d596c437a
-=======
->>>>>>> 152dddba05b2968febda3e3864ac705d596c437a
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
   </ItemGroup>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   <ItemGroup>
     <Folder Include="Migrations\" />
   </ItemGroup>
 
-=======
->>>>>>> 152dddba05b2968febda3e3864ac705d596c437a
-=======
->>>>>>> 152dddba05b2968febda3e3864ac705d596c437a
 </Project>

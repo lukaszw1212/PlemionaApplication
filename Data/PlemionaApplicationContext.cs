@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-<<<<<<< HEAD
-<<<<<<< HEAD
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PlemionaApplication.Entities;
-=======
-=======
->>>>>>> 152dddba05b2968febda3e3864ac705d596c437a
+
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MiniProjekt;
 using PlemionaApplication.Models.Building;
-<<<<<<< HEAD
->>>>>>> 152dddba05b2968febda3e3864ac705d596c437a
-=======
->>>>>>> 152dddba05b2968febda3e3864ac705d596c437a
+
 
 namespace PlemionaApplication.Data
 {
@@ -28,22 +21,9 @@ namespace PlemionaApplication.Data
         {
         }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         public DbSet<PlemionaApplication.Entities.Role> Role { get; set; } = default!;
         public DbSet<PlemionaApplication.Entities.User> User { get; set; } = default!;
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Role>()
-               .HasMany(e => e.Users)
-               .WithOne(e => e.UserRole)
-               .HasForeignKey(e => e.RoleId)
-               .IsRequired();
-        }
-=======
-=======
->>>>>>> 152dddba05b2968febda3e3864ac705d596c437a
         public DbSet<Archer> Archer { get; set; } = default!;
         public DbSet<Armory> Armory { get; set; } = default!;
         public DbSet<Barracks> Barracks { get; set; } = default!;
@@ -71,6 +51,11 @@ namespace PlemionaApplication.Data
                 .WithMany(f => f.Players)
                 .HasForeignKey(p => p.FractionId)
                 .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Role>()
+               .HasMany(e => e.Users)
+               .WithOne(e => e.UserRole)
+               .HasForeignKey(e => e.RoleId)
+               .IsRequired();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -89,9 +74,5 @@ namespace PlemionaApplication.Data
         public DbSet<MiniProjekt.TownHall> TownHall { get; set; } = default!;
         public DbSet<MiniProjekt.Trojan> Trojan { get; set; } = default!;
         public DbSet<MiniProjekt.Warrior> Warrior { get; set; } = default!;
-<<<<<<< HEAD
->>>>>>> 152dddba05b2968febda3e3864ac705d596c437a
-=======
->>>>>>> 152dddba05b2968febda3e3864ac705d596c437a
     }
 }
