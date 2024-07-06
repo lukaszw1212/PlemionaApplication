@@ -12,8 +12,8 @@ using PlemionaApplication.Data;
 namespace PlemionaApplication.Migrations
 {
     [DbContext(typeof(PlemionaApplicationContext))]
-    [Migration("20240706121736_initialcreate4")]
-    partial class initialcreate4
+    [Migration("20240706144600_InitialCreate2")]
+    partial class InitialCreate2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -359,9 +359,14 @@ namespace PlemionaApplication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FractionId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Players");
                 });
@@ -756,7 +761,15 @@ namespace PlemionaApplication.Migrations
                         .HasForeignKey("FractionId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("PlemionaApplication.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Fraction");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MiniProjekt.Resource", b =>

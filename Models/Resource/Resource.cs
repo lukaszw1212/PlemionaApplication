@@ -19,7 +19,7 @@ namespace MiniProjekt
 
         [ForeignKey("PlayerId")]
         public Player Player { get; set; }
-        protected Resource(string name, int amount)
+        public Resource(string name, int amount)
         {
             Name = name;
             Amount = amount;

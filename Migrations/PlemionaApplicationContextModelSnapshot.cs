@@ -356,9 +356,14 @@ namespace PlemionaApplication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FractionId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Players");
                 });
@@ -753,7 +758,15 @@ namespace PlemionaApplication.Migrations
                         .HasForeignKey("FractionId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("PlemionaApplication.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Fraction");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MiniProjekt.Resource", b =>

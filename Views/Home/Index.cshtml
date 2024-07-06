@@ -12,6 +12,7 @@
             margin: 0;
             display: flex;
             flex-direction: column;
+            font-family: Arial, sans-serif;
         }
 
         .container {
@@ -19,6 +20,14 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+        }
+
+        .header {
+            background-color: sandybrown;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 24px;
         }
 
         .content {
@@ -67,6 +76,30 @@
             .tab:hover {
                 background-color: #ddd;
             }
+
+        .resource-bar {
+            background-color: brown;
+            color: gold;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .resource {
+            display: flex;
+            align-items: center;
+        }
+
+            .resource img {
+                width: 30px;
+                height: 30px;
+                margin-right: 10px;
+            }
+
+            .resource span {
+                font-size: 18px;
+            }
     </style>
     <script>
         function showBuildingInfo(buildingName) {
@@ -86,13 +119,31 @@
     @if (User.Identity.IsAuthenticated)
     {
         <div class="container">
-            <div class="tabs">
-                <div class="tab" onclick="location.href='@Url.Action("MyCharacter", "Home")'">Moja Postać</div>
-                <div class="tab" onclick="location.href='@Url.Action("Expeditions", "Home")'">Ekspedycje</div>
-                <div class="tab" onclick="location.href='@Url.Action("MyTribe", "Home")'">Moje Plemie</div>
-                <form asp-action="Logout" method="post">
-                    <button type="submit">Logout</button>
-                </form>
+            <div class="header">
+                @ViewBag.VillageName
+            </div>
+
+            <div class="resource-bar">
+                <div class="resource">
+                    <img src="/images/gold.png" alt="Gold" />
+                    <span>@ViewBag.GoldAmount</span>
+                </div>
+                <div class="resource">
+                    <img src="/images/iron.png" alt="Iron" />
+                    <span>@ViewBag.IronAmount</span>
+                </div>
+                <div class="resource">
+                    <img src="/images/stone.png" alt="Stone" />
+                    <span>@ViewBag.StoneAmount</span>
+                </div>
+                <div class="resource">
+                    <img src="/images/wheat.png" alt="Wheat" />
+                    <span>@ViewBag.WheatAmount</span>
+                </div>
+                <div class="resource">
+                    <img src="/images/wood.png" alt="Wood" />
+                    <span>@ViewBag.WoodAmount</span>
+                </div>
             </div>
 
             <div class="content">

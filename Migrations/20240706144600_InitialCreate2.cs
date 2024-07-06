@@ -5,11 +5,47 @@
 namespace PlemionaApplication.Migrations
 {
     /// <inheritdoc />
-    public partial class initialcreate2 : Migration
+    public partial class InitialCreate2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Role",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Role", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "User",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_User_Role_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Role",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Armory",
                 columns: table => new
@@ -135,7 +171,8 @@ namespace PlemionaApplication.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Level = table.Column<int>(type: "int", nullable: false),
                     CurrentExperience = table.Column<int>(type: "int", nullable: false),
-                    FractionId = table.Column<int>(type: "int", nullable: true)
+                    FractionId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -146,6 +183,12 @@ namespace PlemionaApplication.Migrations
                         principalTable: "Fractions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Players_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -422,6 +465,11 @@ namespace PlemionaApplication.Migrations
                 column: "FractionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Players_UserId",
+                table: "Players",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Resource_ExpeditionId",
                 table: "Resource",
                 column: "ExpeditionId");
@@ -450,6 +498,11 @@ namespace PlemionaApplication.Migrations
                 name: "IX_TownHall_VillageId",
                 table: "TownHall",
                 column: "VillageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_RoleId",
+                table: "User",
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Villages_PlayerId",
@@ -551,6 +604,12 @@ namespace PlemionaApplication.Migrations
 
             migrationBuilder.DropTable(
                 name: "Fractions");
+
+            migrationBuilder.DropTable(
+                name: "User");
+
+            migrationBuilder.DropTable(
+                name: "Role");
         }
     }
 }

@@ -7,6 +7,8 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using PlemionaApplication.Data;
 using PlemionaApplication.Entities;
+using MiniProjekt;
+using System.Security.Permissions;
 
 namespace PlemionaApplication.Controllers
 {
@@ -22,11 +24,30 @@ namespace PlemionaApplication.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            string VillageName = "";
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login");
             }
-
+            string userName = User.Identity.Name;
+            var user = _context.User.FirstOrDefault(u => u.UserName == userName);
+            var player = _context.Players.FirstOrDefault(u => u.UserId == user.Id);
+            if (user == null)
+            {
+                return RedirectToAction("Login");
+            }
+            var village = _context.Villages.FirstOrDefault(v => v.Id == user.Id);
+            ViewBag.VillageName = village.Name;
+            var gold = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Gold);
+            var wood = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Wood);
+            var stone = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Stone);
+            var iron = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Iron);
+            var wheat = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Wheat);
+            ViewBag.GoldAmount = gold.Amount;
+            ViewBag.WoodAmount = wood.Amount;
+            ViewBag.StoneAmount = stone.Amount;
+            ViewBag.IronAmount = iron.Amount;
+            ViewBag.WheatAmount = wheat.Amount;
             return View();
         }
 
@@ -98,6 +119,67 @@ namespace PlemionaApplication.Controllers
                 };
 
                 _context.Add(user);
+                await _context.SaveChangesAsync();
+                var player = new Player
+                {
+                    Name = model.Username,
+                    Level = 1,
+                    CurrentExperience = 0,
+                    UserId = _context.User.Where(u => u.UserName == model.Username).FirstOrDefault().Id
+                };
+                _context.Add(player);
+                await _context.SaveChangesAsync();
+                int villageId = 1;
+                if (model.Username.EndsWith('a') || model.Username.EndsWith('A'))
+                {
+                    var village = new Village
+                    {
+                        Name = "Wioska " + model.Username.Substring(0, model.Username.Length - 1) + "y",
+                        PlayerId = _context.Players.Where(u => u.Name == model.Username).FirstOrDefault().Id
+                    };
+                    _context.Add(village);
+                    await _context.SaveChangesAsync();
+                    villageId = village.Id;
+                }
+                else
+                {
+                    var village = new Village
+                    {
+                        Name = "Wioska " + model.Username + "a",
+                        PlayerId = _context.Players.Where(u => u.Name == model.Username).FirstOrDefault().Id
+                    };
+                    _context.Add(village);
+                    await _context.SaveChangesAsync();
+                    villageId = village.Id;
+                }
+                int PlayerId = player.Id;
+                var gold = new Resource("Gold", 100);
+                gold.PlayerId = PlayerId;
+                var wood = new Resource("Wood", 0);
+                wood.PlayerId = PlayerId;
+                var iron = new Resource("Iron", 0);
+                iron.PlayerId = PlayerId;
+                var stone = new Resource("Stone", 0);
+                stone.PlayerId = PlayerId;
+                var wheat = new Resource("Wheat", 0);
+                wheat.PlayerId = PlayerId;
+                _context.Add(gold);
+                _context.Add(wood);
+                _context.Add(stone);    
+                _context.Add(wheat);    
+                _context.Add(iron);
+                await _context.SaveChangesAsync();
+                var TownHall = new TownHall
+                {
+                    Name = "Ratusz",
+                    Level = 1,
+                    VillageId = villageId,
+                    MaxBuildingLevel = 8,
+                    GenerateGoldPerTime = 10,
+                    MaxGoldPerTime = 1000,
+                    Time = 20
+                 };
+                _context.Add(TownHall);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Login", "Home");
             }
