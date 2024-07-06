@@ -1,0 +1,102 @@
+﻿@model PlemionaApplication.Models.LoginModel
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;  // Użycie własnego układu, brak domyślnego szablonu
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: #fff;
+            padding: 20px 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+            .login-container h2 {
+                margin-bottom: 20px;
+            }
+
+            .login-container label {
+                display: block;
+                margin-bottom: 5px;
+                text-align: left;
+            }
+
+            .login-container input[type="text"],
+            .login-container input[type="password"] {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 20px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            .login-container button[type="submit"] {
+                background-color: #007bff;
+                color: white;
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                width: 100%;
+            }
+
+                .login-container button[type="submit"]:hover {
+                    background-color: #0056b3;
+                }
+
+        .validation-summary-errors {
+            color: red;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>@ViewData["Title"]</h2>
+        <form asp-action="Login" method="post">
+            <div>
+                <label asp-for="Username"></label>
+                <input asp-for="Username" />
+                <span asp-validation-for="Username"></span>
+            </div>
+            <div>
+                <label asp-for="Password"></label>
+                <input asp-for="Password" type="password" />
+                <span asp-validation-for="Password"></span>
+            </div>
+            <div>
+                <label asp-for="RememberMe"></label>
+                <input asp-for="RememberMe" type="checkbox" />
+                <span asp-validation-for="RememberMe"></span>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <div class="validation-summary-errors">
+            @Html.ValidationSummary(true)
+        </div>
+        <div>
+            <a href="@Url.Action("Register", "Home")">Register here</a>
+        </div>
+    </div>
+</body>
+</html>

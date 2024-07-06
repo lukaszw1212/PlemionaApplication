@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlemionaApplication.Data;
 
@@ -11,9 +12,11 @@ using PlemionaApplication.Data;
 namespace PlemionaApplication.Migrations
 {
     [DbContext(typeof(PlemionaApplicationContext))]
-    partial class PlemionaApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20240706121736_initialcreate4")]
+    partial class initialcreate4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

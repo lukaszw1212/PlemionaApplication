@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PlemionaApplication.Data;
 using PlemionaApplication.Entities;
+using PlemionaApplication.Models;
 
 namespace PlemionaApplication.Controllers
 {

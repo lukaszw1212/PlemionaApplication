@@ -1,0 +1,125 @@
+﻿@{
+    ViewData["Title"] = "Strona Główna";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"] - Plemiona</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+        }
+
+        .map {
+            flex: 1;
+            background: url('/images/map.jpg') no-repeat center center;
+            background-size: cover;
+            position: relative;
+            border-right: 1px solid #ccc;
+            height: 100%;
+        }
+
+        .building {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .info {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+            .tab:hover {
+                background-color: #ddd;
+            }
+    </style>
+    <script>
+        function showBuildingInfo(buildingName) {
+            var infoDiv = document.getElementById('buildingInfo');
+            infoDiv.innerHTML = '<h2>' + buildingName + '</h2><p>Informacje o budynku ' + buildingName + '.</p>';
+        }
+
+        function buildBuilding(buildingName, element) {
+            element.innerHTML = buildingName;
+            element.onclick = function () {
+                showBuildingInfo(buildingName);
+            };
+        }
+    </script>
+</head>
+<body>
+    @{
+        if (User.Identity.IsAuthenticated)
+        {
+            <div class="container">
+                <div class="tabs">
+                    <div class="tab" onclick="location.href='@Url.Action("MyCharacter", "Home")'">Moja Postać</div>
+                    <div class="tab" onclick="location.href='@Url.Action("Expeditions", "Home")'">Ekspedycje</div>
+                    <div class="tab" onclick="location.href='@Url.Action("MyTribe", "Home")'">Moje Plemie</div>
+                </div>
+
+                <div class="content">
+                    <div class="map">
+                        <div class="building" style="top: 10%; left: 10%;" onclick="buildBuilding('Tartak', this)">+</div>
+                        <div class="building" style="top: 20%; left: 30%;" onclick="buildBuilding('Koszary', this)">+</div>
+                        <div class="building" style="top: 30%; left: 50%;" onclick="buildBuilding('Zbrojownia', this)">+</div>
+                        <div class="building" style="top: 40%; left: 70%;" onclick="buildBuilding('Farma', this)">+</div>
+                        <div class="building" style="top: 50%; left: 10%;" onclick="buildBuilding('Kopalnia Kamienia', this)">+</div>
+                        <div class="building" style="top: 60%; left: 30%;" onclick="buildBuilding('Kopalnia Żelaza', this)">+</div>
+                        <div class="building" style="top: 50%; left: 50%;" onclick="buildBuilding('Ratusz', this)">+</div>
+                        <div class="building" style="top: 70%; left: 70%;" onclick="buildBuilding('Mury Obronne', this)">+</div>
+                        <div class="building" style="top: 80%; left: 10%;" onclick="buildBuilding('Silos', this)">+</div>
+                        <div class="building" style="top: 90%; left: 30%;" onclick="buildBuilding('Stajnia', this)">+</div>
+                    </div>
+
+                    <div class="info" id="buildingInfo">
+                        <h2>Wybierz budynek na mapie, aby zobaczyć szczegóły</h2>
+                        <p>Informacje o wybranym budynku będą wyświetlane tutaj.</p>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <h2>Musisz być zalogowany, aby zobaczyć tę stronę.</h2>
+            <p><a href="@Url.Action("Login", "Home")">Zaloguj się</a></p>
+        }
+    }
+</body>
+</html>
+

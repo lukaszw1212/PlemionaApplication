@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PlemionaApplication.Data;
+
 namespace PlemionaApplication
 {
     public class Program
@@ -12,14 +14,22 @@ namespace PlemionaApplication
                 options.UseSqlServer(builder.Configuration.GetConnectionString("PlemionaApplicationContext") ?? throw new InvalidOperationException("Connection string 'PlemionaApplicationContext' not found.")));
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();            
+            builder.Services.AddControllersWithViews();
+
+            // Dodajemy obs³ugê uwierzytelniania za pomoc¹ ciasteczek
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Home/Login";
+                    options.LogoutPath = "/Home/Logout";
+                });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -28,6 +38,7 @@ namespace PlemionaApplication
 
             app.UseRouting();
 
+            app.UseAuthentication(); // Dodajemy middleware uwierzytelniania
             app.UseAuthorization();
 
             app.MapControllerRoute(
@@ -35,8 +46,6 @@ namespace PlemionaApplication
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
-
-
         }
     }
 }

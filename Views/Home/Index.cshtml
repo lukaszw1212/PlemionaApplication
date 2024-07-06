@@ -83,32 +83,43 @@
     </script>
 </head>
 <body>
-    <div class="container">
-        <div class="tabs">
-            <div class="tab" onclick="location.href='@Url.Action("MyCharacter", "Home")'">Moja Postać</div>
-            <div class="tab" onclick="location.href='@Url.Action("Expeditions", "Home")'">Ekspedycje</div>
-            <div class="tab" onclick="location.href='@Url.Action("MyTribe", "Home")'">Moje Plemie</div>
-        </div>
-
-        <div class="content">
-            <div class="map">
-                <div class="building" style="top: 10%; left: 10%;" onclick="buildBuilding('Tartak', this)">+</div>
-                <div class="building" style="top: 20%; left: 30%;" onclick="buildBuilding('Koszary', this)">+</div>
-                <div class="building" style="top: 30%; left: 50%;" onclick="buildBuilding('Zbrojownia', this)">+</div>
-                <div class="building" style="top: 40%; left: 70%;" onclick="buildBuilding('Farma', this)">+</div>
-                <div class="building" style="top: 50%; left: 10%;" onclick="buildBuilding('Kopalnia Kamienia', this)">+</div>
-                <div class="building" style="top: 60%; left: 30%;" onclick="buildBuilding('Kopalnia Żelaza', this)">+</div>
-                <div class="building" style="top: 50%; left: 50%;" onclick="buildBuilding('Ratusz', this)">+</div>
-                <div class="building" style="top: 70%; left: 70%;" onclick="buildBuilding('Mury Obronne', this)">+</div>
-                <div class="building" style="top: 80%; left: 10%;" onclick="buildBuilding('Silos', this)">+</div>
-                <div class="building" style="top: 90%; left: 30%;" onclick="buildBuilding('Stajnia', this)">+</div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="container">
+            <div class="tabs">
+                <div class="tab" onclick="location.href='@Url.Action("MyCharacter", "Home")'">Moja Postać</div>
+                <div class="tab" onclick="location.href='@Url.Action("Expeditions", "Home")'">Ekspedycje</div>
+                <div class="tab" onclick="location.href='@Url.Action("MyTribe", "Home")'">Moje Plemie</div>
+                <form asp-action="Logout" method="post">
+                    <button type="submit">Logout</button>
+                </form>
             </div>
 
-            <div class="info" id="buildingInfo">
-                <h2>Wybierz budynek na mapie, aby zobaczyć szczegóły</h2>
-                <p>Informacje o wybranym budynku będą wyświetlane tutaj.</p>
+            <div class="content">
+                <div class="map">
+                    <div class="building" style="top: 10%; left: 10%;" onclick="buildBuilding('Tartak', this)">+</div>
+                    <div class="building" style="top: 20%; left: 30%;" onclick="buildBuilding('Koszary', this)">+</div>
+                    <div class="building" style="top: 30%; left: 50%;" onclick="buildBuilding('Zbrojownia', this)">+</div>
+                    <div class="building" style="top: 40%; left: 70%;" onclick="buildBuilding('Farma', this)">+</div>
+                    <div class="building" style="top: 50%; left: 10%;" onclick="buildBuilding('Kopalnia Kamienia', this)">+</div>
+                    <div class="building" style="top: 60%; left: 30%;" onclick="buildBuilding('Kopalnia Żelaza', this)">+</div>
+                    <div class="building" style="top: 50%; left: 50%;" onclick="buildBuilding('Ratusz', this)">+</div>
+                    <div class="building" style="top: 70%; left: 70%;" onclick="buildBuilding('Mury Obronne', this)">+</div>
+                    <div class="building" style="top: 80%; left: 10%;" onclick="buildBuilding('Silos', this)">+</div>
+                    <div class="building" style="top: 90%; left: 30%;" onclick="buildBuilding('Stajnia', this)">+</div>
+                </div>
+
+                <div class="info" id="buildingInfo">
+                    <h2>Wybierz budynek na mapie, aby zobaczyć szczegóły</h2>
+                    <p>Informacje o wybranym budynku będą wyświetlane tutaj.</p>
+                </div>
             </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <h2>Musisz być zalogowany, aby zobaczyć tę stronę.</h2>
+        <p><a href="@Url.Action("Login", "Home")">Zaloguj się</a></p>
+    }
 </body>
 </html>
