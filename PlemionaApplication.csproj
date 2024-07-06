@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Nowy folder\**" />
+    <Content Remove="Views\Nowy folder\**" />
+    <EmbeddedResource Remove="Views\Nowy folder\**" />
+    <None Remove="Views\Nowy folder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Models\Budynek.cs" />
     <Compile Remove="Models\Farma.cs" />
     <Compile Remove="Models\KopalniaKamienia.cs" />
@@ -31,10 +38,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\Nowy folder\" />
   </ItemGroup>
 
 </Project>
