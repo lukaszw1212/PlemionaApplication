@@ -29,25 +29,29 @@ namespace PlemionaApplication.Controllers
             {
                 return RedirectToAction("Login");
             }
-            string userName = User.Identity.Name;
-            var user = _context.User.FirstOrDefault(u => u.UserName == userName);
-            var player = _context.Players.FirstOrDefault(u => u.UserId == user.Id);
-            if (user == null)
+            else
             {
-                return RedirectToAction("Login");
+                string userName = User.Identity.Name;
+                var user = _context.User.FirstOrDefault(u => u.UserName == userName);
+                var player = _context.Players.FirstOrDefault(u => u.UserId == user.Id);
+                if (user == null)
+                {
+                    return RedirectToAction("Login");
+                }
+                var village = _context.Villages.FirstOrDefault(v => v.Id == user.Id);
+                ViewBag.VillageName = village.Name;
+                var gold = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Gold);
+                var wood = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Wood);
+                var stone = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Stone);
+                var iron = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Iron);
+                var wheat = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Wheat);
+                ViewBag.GoldAmount = gold.Amount;
+                ViewBag.WoodAmount = wood.Amount;
+                ViewBag.StoneAmount = stone.Amount;
+                ViewBag.IronAmount = iron.Amount;
+                ViewBag.WheatAmount = wheat.Amount;
             }
-            var village = _context.Villages.FirstOrDefault(v => v.Id == user.Id);
-            ViewBag.VillageName = village.Name;
-            var gold = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Gold);
-            var wood = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Wood);
-            var stone = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Stone);
-            var iron = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Iron);
-            var wheat = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Wheat);
-            ViewBag.GoldAmount = gold.Amount;
-            ViewBag.WoodAmount = wood.Amount;
-            ViewBag.StoneAmount = stone.Amount;
-            ViewBag.IronAmount = iron.Amount;
-            ViewBag.WheatAmount = wheat.Amount;
+            
             return View();
         }
 
@@ -68,6 +72,8 @@ namespace PlemionaApplication.Controllers
 
                 if (user != null)
                 {
+                    HttpContext.Session.SetString("UserId", user.Id.ToString());
+
                     var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
@@ -82,6 +88,11 @@ namespace PlemionaApplication.Controllers
                     };
 
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                    CookieOptions option = new CookieOptions();
+                    option.Expires = DateTime.Now.AddMinutes(30);
+                    Response.Cookies.Append("UserId", user.Id.ToString(), option);
+
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -95,6 +106,9 @@ namespace PlemionaApplication.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            Response.Cookies.Delete("UserId");
+
             return RedirectToAction("Login");
         }
 
@@ -187,19 +201,65 @@ namespace PlemionaApplication.Controllers
             return View(model);
         }
 
-        public IActionResult MyCharacter()
+        public async Task<IActionResult> MyCharacter()
         {
-            return View();
+            string userIdString = Request.Cookies["UserId"];
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            if (!int.TryParse(userIdString, out int userId))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var player = await _context.Players.FirstOrDefaultAsync(p => p.UserId == userId);
+            if (player == null)
+            {
+                return NotFound();
+            }
+
+            return View(player);
         }
+
+
 
         public IActionResult Expeditions()
         {
             return View();
         }
 
-        public IActionResult MyTribe()
+        public async Task<IActionResult> MyTribe()
         {
-            return View();
+            string userIdString = Request.Cookies["UserId"];
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            if (!int.TryParse(userIdString, out int userId))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var player = await _context.Players
+                                       .FirstOrDefaultAsync(p => p.UserId == userId);
+            if (player == null)
+            {
+                return NotFound();
+            }
+
+            var fraction = await _context.Fractions
+                                         .Include(f => f.GuildMaster)
+                                         .Include(f => f.Players)
+                                         .FirstOrDefaultAsync(f => f.Id == player.FractionId);
+            if (fraction == null)
+            {
+                return NotFound();
+            }
+
+            return View(fraction);
         }
 
         public IActionResult Privacy()

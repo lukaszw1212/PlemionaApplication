@@ -25,7 +25,15 @@ namespace PlemionaApplication
                     options.LogoutPath = "/Home/Logout";
                 });
 
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Czas trwania sesji
+                options.Cookie.HttpOnly = true; // Bezpieczeñstwo ciasteczek
+                options.Cookie.IsEssential = true; // Konieczne dla pracy aplikacji
+            });
+
             var app = builder.Build();
+
 
             using (var scope = app.Services.CreateScope())
             {
@@ -46,8 +54,14 @@ namespace PlemionaApplication
 
             app.UseRouting();
 
+            app.UseSession();
+
             app.UseAuthentication(); // Dodajemy middleware uwierzytelniania
             app.UseAuthorization();
+
+            
+
+
 
             app.MapControllerRoute(
                 name: "default",

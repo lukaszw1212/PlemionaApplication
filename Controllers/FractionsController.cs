@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using MiniProjekt;
 using PlemionaApplication.Data;
+using PlemionaApplication.Models;
 
 namespace PlemionaApplication.Controllers
 {
@@ -61,12 +61,16 @@ namespace PlemionaApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                ViewData["GuildMasterId"] = new SelectList(_context.Players, "Id", "Name", fraction.GuildMasterId);
+                return View(fraction);
+            }
+            else
+            {
                 _context.Add(fraction);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GuildMasterId"] = new SelectList(_context.Players, "Id", "Name", fraction.GuildMasterId);
-            return View(fraction);
+            
         }
 
         // GET: Fractions/Edit/5
@@ -98,7 +102,7 @@ namespace PlemionaApplication.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 try
                 {

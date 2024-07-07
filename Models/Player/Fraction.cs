@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using PlemionaApplication.Entities;
 
-namespace MiniProjekt
+namespace PlemionaApplication.Models
 {
     public class Fraction
     {
         public int Id { get; set; }
         [Required]
-        public int Name { get; set; }
+        public string Name { get; set; }
         public int? GuildMasterId { get; set; }
 
         [ForeignKey("GuildMasterId")]

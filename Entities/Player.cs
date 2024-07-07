@@ -1,8 +1,9 @@
-﻿using PlemionaApplication.Entities;
+﻿using MiniProjekt;
+using PlemionaApplication.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MiniProjekt
+namespace PlemionaApplication.Entities
 {
     public class Player
     {
@@ -17,7 +18,7 @@ namespace MiniProjekt
         [ForeignKey("FractionId")]
         public Fraction? Fraction { get; set; }
         public List<Village>? Villages { get; set; }
-        public int UserId {  get; set; }
+        public int UserId { get; set; }
         [ForeignKey("UserId")]
         public User User { get; set; }
     }

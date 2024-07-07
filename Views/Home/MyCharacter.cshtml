@@ -1,6 +1,24 @@
-﻿@{
+﻿@model PlemionaApplication.Entities.Player
+
+@{
     ViewData["Title"] = "Moja Postać";
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-McKPkTZlVbBbG6O8oBNuAU4SVn/J5j7zBQq4DzjwqXPsjhUGz2/wHUL6gsuN5DAJ" crossorigin="anonymous">
 }
 
-<h2>@ViewData["Title"]</h2>
-<p>Tutaj będą informacje o Twojej postaci.</p>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Moja Postać</h2>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">@Model.Name</h4>
+                    <p class="card-text">Poziom: @Model.Level</p>
+                    <p class="card-text">Doświadczenie: @Model.CurrentExperience</p>
+                    <p class="card-text">Frakcja: @Model.FractionId</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

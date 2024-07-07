@@ -1,6 +1,27 @@
-﻿@{
-    ViewData["Title"] = "Moje Plemie";
+﻿@model Fraction
+
+@{
+    ViewData["Title"] = "Moje Plemię";
 }
 
-<h2>@ViewData["Title"]</h2>
-<p>Tutaj będą informacje o Twoim plemieniu.</p>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h2>@Model.Name</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Guild Master:</strong> @Model.GuildMaster?.Name</p>
+                    <h4>Members:</h4>
+                    <ul>
+                        @foreach (var player in Model.Players)
+                        {
+                            <li>@player.Name</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

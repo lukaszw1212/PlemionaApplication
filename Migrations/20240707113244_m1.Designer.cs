@@ -12,8 +12,8 @@ using PlemionaApplication.Data;
 namespace PlemionaApplication.Migrations
 {
     [DbContext(typeof(PlemionaApplicationContext))]
-    [Migration("20240706162753_ads")]
-    partial class ads
+    [Migration("20240707113244_m1")]
+    partial class m1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -209,27 +209,6 @@ namespace PlemionaApplication.Migrations
                     b.ToTable("Expedition");
                 });
 
-            modelBuilder.Entity("MiniProjekt.Fraction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("GuildMasterId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Name")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GuildMasterId");
-
-                    b.ToTable("Fractions");
-                });
-
             modelBuilder.Entity("MiniProjekt.GrainFarm", b =>
                 {
                     b.Property<int>("Id")
@@ -336,39 +315,6 @@ namespace PlemionaApplication.Migrations
                     b.HasIndex("VillageId");
 
                     b.ToTable("IronMine");
-                });
-
-            modelBuilder.Entity("MiniProjekt.Player", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CurrentExperience")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("FractionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Level")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FractionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Players");
                 });
 
             modelBuilder.Entity("MiniProjekt.Resource", b =>
@@ -562,6 +508,39 @@ namespace PlemionaApplication.Migrations
                     b.ToTable("Villages");
                 });
 
+            modelBuilder.Entity("PlemionaApplication.Entities.Player", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CurrentExperience")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FractionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FractionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Players");
+                });
+
             modelBuilder.Entity("PlemionaApplication.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -610,6 +589,28 @@ namespace PlemionaApplication.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("PlemionaApplication.Models.Fraction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("GuildMasterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GuildMasterId");
+
+                    b.ToTable("Fractions");
                 });
 
             modelBuilder.Entity("MiniProjekt.Archer", b =>
@@ -711,16 +712,6 @@ namespace PlemionaApplication.Migrations
                     b.Navigation("DefensiveWalls");
                 });
 
-            modelBuilder.Entity("MiniProjekt.Fraction", b =>
-                {
-                    b.HasOne("MiniProjekt.Player", "GuildMaster")
-                        .WithMany()
-                        .HasForeignKey("GuildMasterId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("GuildMaster");
-                });
-
             modelBuilder.Entity("MiniProjekt.GrainFarm", b =>
                 {
                     b.HasOne("MiniProjekt.Village", "Village")
@@ -754,31 +745,13 @@ namespace PlemionaApplication.Migrations
                     b.Navigation("Village");
                 });
 
-            modelBuilder.Entity("MiniProjekt.Player", b =>
-                {
-                    b.HasOne("MiniProjekt.Fraction", "Fraction")
-                        .WithMany("Players")
-                        .HasForeignKey("FractionId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("PlemionaApplication.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Fraction");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("MiniProjekt.Resource", b =>
                 {
                     b.HasOne("MiniProjekt.Expedition", null)
                         .WithMany("Resources")
                         .HasForeignKey("ExpeditionId");
 
-                    b.HasOne("MiniProjekt.Player", "Player")
+                    b.HasOne("PlemionaApplication.Entities.Player", "Player")
                         .WithMany("Resources")
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -833,13 +806,31 @@ namespace PlemionaApplication.Migrations
 
             modelBuilder.Entity("MiniProjekt.Village", b =>
                 {
-                    b.HasOne("MiniProjekt.Player", "Player")
+                    b.HasOne("PlemionaApplication.Entities.Player", "Player")
                         .WithMany("Villages")
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("PlemionaApplication.Entities.Player", b =>
+                {
+                    b.HasOne("PlemionaApplication.Models.Fraction", "Fraction")
+                        .WithMany("Players")
+                        .HasForeignKey("FractionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("PlemionaApplication.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Fraction");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PlemionaApplication.Entities.User", b =>
@@ -853,6 +844,16 @@ namespace PlemionaApplication.Migrations
                     b.Navigation("UserRole");
                 });
 
+            modelBuilder.Entity("PlemionaApplication.Models.Fraction", b =>
+                {
+                    b.HasOne("PlemionaApplication.Entities.Player", "GuildMaster")
+                        .WithMany()
+                        .HasForeignKey("GuildMasterId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("GuildMaster");
+                });
+
             modelBuilder.Entity("MiniProjekt.Expedition", b =>
                 {
                     b.Navigation("Entities");
@@ -860,12 +861,7 @@ namespace PlemionaApplication.Migrations
                     b.Navigation("Resources");
                 });
 
-            modelBuilder.Entity("MiniProjekt.Fraction", b =>
-                {
-                    b.Navigation("Players");
-                });
-
-            modelBuilder.Entity("MiniProjekt.Player", b =>
+            modelBuilder.Entity("PlemionaApplication.Entities.Player", b =>
                 {
                     b.Navigation("Resources");
 
@@ -875,6 +871,11 @@ namespace PlemionaApplication.Migrations
             modelBuilder.Entity("PlemionaApplication.Entities.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("PlemionaApplication.Models.Fraction", b =>
+                {
+                    b.Navigation("Players");
                 });
 #pragma warning restore 612, 618
         }
