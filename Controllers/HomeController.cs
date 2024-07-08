@@ -38,7 +38,7 @@ namespace PlemionaApplication.Controllers
                 {
                     return RedirectToAction("Login");
                 }
-                var village = _context.Villages.FirstOrDefault(v => v.Id == user.Id);
+                var village = _context.Villages.FirstOrDefault(v => v.Id == player.Id);
                 ViewBag.VillageName = village.Name;
                 var gold = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Gold);
                 var wood = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Wood);
@@ -50,11 +50,150 @@ namespace PlemionaApplication.Controllers
                 ViewBag.StoneAmount = stone.Amount;
                 ViewBag.IronAmount = iron.Amount;
                 ViewBag.WheatAmount = wheat.Amount;
+                //predkosci generowania
+                var townHall = _context.TownHall.FirstOrDefault(t => t.VillageId == village.Id);
+                ViewBag.TownHallSpeed = townHall.Time;
+                var sawmill = _context.Sawmill.FirstOrDefault(t => t.VillageId == village.Id);
+                if (sawmill != null) ViewBag.SawmillSpeed = sawmill.Time;
+                else ViewBag.SawmillSpeed = 30;
+                var ironmine = _context.IronMine.FirstOrDefault(t => t.VillageId == village.Id);
+                if (ironmine != null) ViewBag.IronMineSpeed = ironmine.Time;
+                else ViewBag.IronMineSpeed = 55;
+                var stonemine = _context.StoneMine.FirstOrDefault(t => t.VillageId == village.Id);
+                if (stonemine != null) ViewBag.StoneMineSpeed = stonemine.Time;
+                else ViewBag.StoneMineSpeed = 35;
+                var grainfarm = _context.GrainFarm.FirstOrDefault(t => t.VillageId == village.Id);
+                if (grainfarm != null) ViewBag.GrainFarmSpeed = grainfarm.Time;
+                else ViewBag.GrainFarmSpeed = 40;
+                //sprawdzenie czy budynek jest wybudowany
+                ViewBag.IsSawmillBuilt = _context.Sawmill.Any(b => b.VillageId == village.Id) ? 1 : 0;
+                ViewBag.IsBarracksBuilt = _context.Barracks.Any(b => b.VillageId == village.Id) ? 1 : 0;
+                ViewBag.IsArmoryBuilt = _context.Armory.Any(b => b.VillageId == village.Id) ? 1 : 0;
+                ViewBag.IsGrainFarmBuilt = _context.GrainFarm.Any(b => b.VillageId == village.Id) ? 1 : 0;
+                ViewBag.IsStoneMineBuilt = _context.StoneMine.Any(b => b.VillageId == village.Id) ? 1 : 0;
+                ViewBag.IsIronMineBuilt = _context.IronMine.Any(b => b.VillageId == village.Id) ? 1 : 0;
+                ViewBag.IsDefensiveWallsBuilt = _context.DefensiveWalls.Any(b => b.VillageId == village.Id) ? 1 : 0;
+                ViewBag.IsSiloBuilt = _context.Silo.Any(b => b.VillageId == village.Id) ? 1 : 0;
+                ViewBag.IsHorseStableBuilt = _context.HorseStable.Any(b => b.VillageId == village.Id) ? 1 : 0;
+                ViewBag.IsTownhallBuilt = _context.TownHall.Any(b => b.VillageId == village.Id) ? 1 : 0;
+
             }
             
             return View();
         }
+        [HttpPost]
+        public async Task<IActionResult> CollectGold()
+        {
+            string userName = User.Identity.Name;
+            var user = _context.User.FirstOrDefault(u => u.UserName == userName);
+            var player = _context.Players.FirstOrDefault(u => u.UserId == user.Id);
+            var playerId = player.Id;
+            var village = _context.Villages.FirstOrDefault(v => v.Id == playerId);
+            var goldResource = _context.Resources.FirstOrDefault(r => r.PlayerId == playerId && r.Type == MiniProjekt.Enumerable.ResourceType.Gold);
+            if (goldResource != null)
+            {
+                var townHall = _context.TownHall.FirstOrDefault(t => t.VillageId == village.Id);
+                if (townHall != null)
+                {
+                    if (goldResource.Amount < townHall.MaxGoldPerTime)
+                    {
+                        goldResource.Amount += townHall.GenerateGoldPerTime;
+                        _context.SaveChanges();
+                    }
+                }
+            }
 
+            return PartialView("_GoldAmountPartial", goldResource?.Amount ?? 0);
+        }
+        [HttpPost]
+        public async Task<IActionResult> CollectWood()
+        {
+            string userName = User.Identity.Name;
+            var user = _context.User.FirstOrDefault(u => u.UserName == userName);
+            var player = _context.Players.FirstOrDefault(u => u.UserId == user.Id);
+            var playerId = player.Id;
+            var village = _context.Villages.FirstOrDefault(v => v.Id == playerId);
+            var woodResource = _context.Resources.FirstOrDefault(r => r.PlayerId == playerId && r.Type == MiniProjekt.Enumerable.ResourceType.Wood);
+            if (woodResource != null)
+            {
+                var sawmill = _context.Sawmill.FirstOrDefault(t => t.VillageId == village.Id);
+                if (sawmill != null)
+                {
+                    if (woodResource.Amount < sawmill.MaxWoodPerTime)
+                    {
+                        woodResource.Amount += sawmill.GenerateWoodPerTime;
+                        _context.SaveChanges();
+                    }
+                }
+            }
+            return PartialView("_WoodAmountPartial", woodResource?.Amount ?? 0);
+        }
+        public async Task<IActionResult> CollectIron()
+        {
+            string userName = User.Identity.Name;
+            var user = _context.User.FirstOrDefault(u => u.UserName == userName);
+            var player = _context.Players.FirstOrDefault(u => u.UserId == user.Id);
+            var playerId = player.Id;
+            var village = _context.Villages.FirstOrDefault(v => v.Id == playerId);
+            var ironResource = _context.Resources.FirstOrDefault(r => r.PlayerId == playerId && r.Type == MiniProjekt.Enumerable.ResourceType.Iron);
+            if (ironResource != null)
+            {
+                var ironmine = _context.IronMine.FirstOrDefault(t => t.VillageId == village.Id);
+                if (ironmine != null)
+                {
+                    if (ironResource.Amount < ironmine.MaxIronPerTime)
+                    {
+                        ironResource.Amount += ironmine.GenerateIronPerTime;
+                        _context.SaveChanges();
+                    }
+                }
+            }
+            return PartialView("_IronAmountPartial", ironResource?.Amount ?? 0);
+        }
+        public async Task<IActionResult> CollectStone()
+        {
+            string userName = User.Identity.Name;
+            var user = _context.User.FirstOrDefault(u => u.UserName == userName);
+            var player = _context.Players.FirstOrDefault(u => u.UserId == user.Id);
+            var playerId = player.Id;
+            var village = _context.Villages.FirstOrDefault(v => v.Id == playerId);
+            var stoneResource = _context.Resources.FirstOrDefault(r => r.PlayerId == playerId && r.Type == MiniProjekt.Enumerable.ResourceType.Stone);
+            if (stoneResource != null)
+            {
+                var stonemine = _context.StoneMine.FirstOrDefault(t => t.VillageId == village.Id);
+                if (stonemine != null)
+                {
+                    if (stoneResource.Amount < stonemine.MaxStonePerTime)
+                    {
+                        stoneResource.Amount += stonemine.GenerateStonePerTime;
+                        _context.SaveChanges();
+                    }
+                }
+            }
+            return PartialView("_StoneAmountPartial", stoneResource?.Amount ?? 0);
+        }
+        public async Task<IActionResult> CollectWheat()
+        {
+            string userName = User.Identity.Name;
+            var user = _context.User.FirstOrDefault(u => u.UserName == userName);
+            var player = _context.Players.FirstOrDefault(u => u.UserId == user.Id);
+            var playerId = player.Id;
+            var village = _context.Villages.FirstOrDefault(v => v.Id == playerId);
+            var wheatResource = _context.Resources.FirstOrDefault(r => r.PlayerId == playerId && r.Type == MiniProjekt.Enumerable.ResourceType.Wheat);
+            if (wheatResource != null)
+            {
+                var grainfarm = _context.GrainFarm.FirstOrDefault(t => t.VillageId == village.Id);
+                if (grainfarm != null)
+                {
+                    if (wheatResource.Amount < grainfarm.MaxFarmPerTime)
+                    {
+                        wheatResource.Amount += grainfarm.GenerateWheatPerTime;
+                        _context.SaveChanges();
+                    }
+                }
+            }
+            return PartialView("_WheatAmountPartial", wheatResource?.Amount ?? 0);
+        }
         [HttpGet]
         public IActionResult Login()
         {

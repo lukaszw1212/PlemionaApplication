@@ -68,6 +68,18 @@
             margin-bottom: 20px;
             text-align: left;
         }
+
+        .remember-me-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+            .remember-me-container label {
+                margin: 0;
+                margin-left: 8px;
+            }
     </style>
 </head>
 <body>
@@ -84,9 +96,9 @@
                 <input asp-for="Password" type="password" />
                 <span asp-validation-for="Password"></span>
             </div>
-            <div>
-                <label asp-for="RememberMe"></label>
+            <div class="remember-me-container">
                 <input asp-for="RememberMe" type="checkbox" />
+                <label asp-for="RememberMe"></label>
                 <span asp-validation-for="RememberMe"></span>
             </div>
             <button type="submit">Login</button>

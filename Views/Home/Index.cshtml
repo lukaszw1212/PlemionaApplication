@@ -1,5 +1,12 @@
-﻿@{
+﻿@model MiniProjekt.Resource
+@{
     ViewData["Title"] = "Strona Główna";
+    int goldAmount = ViewBag.GoldAmount ?? 0;
+    int woodAmount = ViewBag.WoodAmount ?? 0;
+    int wheatAmount = ViewBag.WheatAmount ?? 0;
+    int stoneAmount = ViewBag.StoneAmount ?? 0;
+    int ironAmount = ViewBag.IronAmount ?? 0;
+
 }
 
 <!DOCTYPE html>
@@ -101,18 +108,134 @@
                 font-size: 18px;
             }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         function showBuildingInfo(buildingName) {
             var infoDiv = document.getElementById('buildingInfo');
             infoDiv.innerHTML = '<h2>' + buildingName + '</h2><p>Informacje o budynku ' + buildingName + '.</p>';
+            var resources = {
+                "Tartak": { Gold: 100 },
+                "Koszary": { Wood: 80, Gold: 150, Wheat: 100 },
+                "Zbrojownia": { Iron: 100, Stone: 200, Gold: 250 },
+                "Farma": { Wood: 80, Gold: 200 },
+                "Kopalnia Kamienia": { Gold: 150 },
+                "Kopalnia Żelaza": { Stone: 100, Gold: 150 },
+                "Mury Obronne": { Iron: 100, Wood: 100, Stone: 100 },
+                "Silos": { Gold: 250, Wood: 300 },
+                "Stajnia": { Wheat: 300, Gold: 200, Wood: 200 },
+            };
+
+            var resourceInfo = resources[buildingName];
+            var resourceText = "<ul>";
+            for (var resource in resourceInfo) {
+                var imgName = resource.toLowerCase();
+                resourceText += "<li>" + "<img src=/images/" + imgName + ".png" + ">" + resource + ": " + resourceInfo[resource];
+            }
+            resourceText += "</ul>";
+
+            infoDiv.innerHTML = '<h2>' + buildingName + '</h2><p>Wymagane surowce:</p>' + resourceText;
+            switch (buildingName) 
+            { 
+                case "Tartak":
+                    if (@ViewBag.IsSawmillBuilt == 0)
+                        infoDiv.innerHTML += '<button type="button" id=(\'' + buildingName + '\') class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                    else
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                    break;
+                case "Koszary":
+                    if (@ViewBag.IsBarracksBuilt == 0)
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                    else
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                    break;
+                case "Zbrojownia":
+                    if (@ViewBag.IsArmoryBuilt == 0)
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                    else
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                    break;
+                case "Farma":
+                    if (@ViewBag.IsGrainFarmBuilt == 0)
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                    else
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                    break;
+                case "Kopalnia Kamienia":
+                    if (@ViewBag.IsStoneMineBuilt == 0)
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                    else
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                    break;
+                case "Kopalnia Żelaza":
+                    if (@ViewBag.IsIronMineBuilt == 0)
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                    else
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                    break;
+                case "Mury Obronne":
+                    if (@ViewBag.IsDefensiveWallsBuilt == 0)
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                    else
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                    break;
+                case "Silos":
+                    if (@ViewBag.IsSiloBuilt == 0)
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                    else
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                    break;
+                case "Stajnia":
+                    if (@ViewBag.IsHorseStableBuilt == 0)
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                    else
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                    break;
+                case "Ratusz":
+                    if (@ViewBag.IsTownhallBuilt == 0)
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                    else
+                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+            }
         }
 
-        function buildBuilding(buildingName, element) {
-            element.innerHTML = buildingName;
-            element.onclick = function () {
-                showBuildingInfo(buildingName);
-            };
+        function buildBuilding(buildingName) {
+            $.post('/Building/BuildBuilding', { buildingName: buildingName }, function () {
+                location.reload();
+            });
+            
         }
+        function collectGold() {
+            $.post('/Home/CollectGold', function (data) {
+                $('#goldAmount').html(data);
+            });
+        }
+        function collectWood() {
+            $.post('/Home/CollectWood', function (data) {
+                $('#woodAmount').html(data);
+            });
+        }
+        function collectStone() {
+            $.post('/Home/CollectStone', function (data) {
+                $('#stoneAmount').html(data);
+            });
+        }
+        function collectIron() {
+            $.post('/Home/CollectIron', function (data) {
+                $('#ironAmount').html(data);
+            });
+        }
+        function collectWheat() {
+            $.post('/Home/CollectWheat', function (data) {
+                $('#wheatAmount').html(data);
+            });
+        }
+        $(document).ready(function () {
+            setInterval(collectGold, 250 * @ViewBag.TownHallSpeed); //zbieranie złota
+            setInterval(collectWood, 250 * @ViewBag.SawmillSpeed); //zbieranie drewna
+            setInterval(collectStone, 250 * @ViewBag.StoneMineSpeed); //zbieranie kamienia
+            setInterval(collectIron, 250 * @ViewBag.IronMineSpeed); //zbieranie zelaza
+            setInterval(collectWheat, 250 * @ViewBag.GrainFarmSpeed); //zbieranie zboza
+        });
     </script>
 </head>
 <body>
@@ -126,44 +249,65 @@
             <div class="resource-bar">
                 <div class="resource">
                     <img src="/images/gold.png" alt="Gold" />
-                    <span>@ViewBag.GoldAmount</span>
+                    <span id="goldAmount">
+                        @{
+                           @Html.Partial("_GoldAmountPartial", goldAmount)
+                        }
+                    </span>
                 </div>
                 <div class="resource">
                     <img src="/images/iron.png" alt="Iron" />
-                    <span>@ViewBag.IronAmount</span>
+                    <span id="ironAmount">
+                        @{
+                            @Html.Partial("_IronAmountPartial", ironAmount)
+                        }
+                    </span>
                 </div>
                 <div class="resource">
                     <img src="/images/stone.png" alt="Stone" />
-                    <span>@ViewBag.StoneAmount</span>
+                    <span id="stoneAmount">
+                        @{
+                            @Html.Partial("_StoneAmountPartial", stoneAmount)
+                        }
+                    </span>
                 </div>
                 <div class="resource">
                     <img src="/images/wheat.png" alt="Wheat" />
-                    <span>@ViewBag.WheatAmount</span>
+                    <span id="wheatAmount">
+                        @{
+                            @Html.Partial("_WheatAmountPartial", wheatAmount)
+                        }
+                    </span>
                 </div>
                 <div class="resource">
                     <img src="/images/wood.png" alt="Wood" />
-                    <span>@ViewBag.WoodAmount</span>
+                    <span id="woodAmount">
+                        @{
+                            @Html.Partial("_WoodAmountPartial", woodAmount)
+                        }
+                    </span>
                 </div>
             </div>
 
             <div class="content">
                 <div class="map">
-                    <div class="building" style="top: 10%; left: 10%;" onclick="buildBuilding('Tartak', this)">+</div>
-                    <div class="building" style="top: 20%; left: 30%;" onclick="buildBuilding('Koszary', this)">+</div>
-                    <div class="building" style="top: 30%; left: 50%;" onclick="buildBuilding('Zbrojownia', this)">+</div>
-                    <div class="building" style="top: 40%; left: 70%;" onclick="buildBuilding('Farma', this)">+</div>
-                    <div class="building" style="top: 50%; left: 10%;" onclick="buildBuilding('Kopalnia Kamienia', this)">+</div>
-                    <div class="building" style="top: 60%; left: 30%;" onclick="buildBuilding('Kopalnia Żelaza', this)">+</div>
-                    <div class="building" style="top: 50%; left: 50%;" onclick="buildBuilding('Ratusz', this)">+</div>
-                    <div class="building" style="top: 70%; left: 70%;" onclick="buildBuilding('Mury Obronne', this)">+</div>
-                    <div class="building" style="top: 80%; left: 10%;" onclick="buildBuilding('Silos', this)">+</div>
-                    <div class="building" style="top: 90%; left: 30%;" onclick="buildBuilding('Stajnia', this)">+</div>
+                    <div class="building" style="top: 10%; left: 10%;" onclick="showBuildingInfo('Tartak', this)"><img src="/images/sawmill.png" alt="Tartak"/></div>
+                    <div class="building" style="top: 20%; left: 30%;" onclick="showBuildingInfo('Koszary', this)"><img src="/images/barracks.png" alt="Koszary" /></div>
+                    <div class="building" style="top: 30%; left: 50%;" onclick="showBuildingInfo('Zbrojownia', this)"><img src="/images/armory.png" alt="Zbrojownia" /></div>
+                    <div class="building" style="top: 40%; left: 70%;" onclick="showBuildingInfo('Farma', this)"><img src="/images/grainfarm.png" alt="Farma" /></div>
+                    <div class="building" style="top: 50%; left: 10%;" onclick="showBuildingInfo('Kopalnia Kamienia', this)"><img src="/images/stonemine.png" alt="Kopalnia kamienia" /></div>
+                    <div class="building" style="top: 60%; left: 30%;" onclick="showBuildingInfo('Kopalnia Żelaza', this)"><img src="/images/ironmine.png" alt="Kopalnia żelaza" /></div>
+                    <div class="building" style="top: 50%; left: 50%;" onclick="showBuildingInfo('Ratusz', this)"><img src="/images/city_hall.png" alt="Ratusz" /></div>
+                    <div class="building" style="top: 70%; left: 70%;" onclick="showBuildingInfo('Mury Obronne', this)"><img src="/images/wall.png" alt="Mury obronne" /></div>
+                    <div class="building" style="top: 80%; left: 10%;" onclick="showBuildingInfo('Silos', this)"><img src="/images/silo.png" alt="Silos" /></div>
+                    <div class="building" style="top: 90%; left: 30%;" onclick="showBuildingInfo('Stajnia', this)"><img src="/images/horses.png" alt="Stajnia" /></div>
                 </div>
 
                 <div class="info" id="buildingInfo">
-                    <h2>Wybierz budynek na mapie, aby zobaczyć szczegóły</h2>
-                    <p>Informacje o wybranym budynku będą wyświetlane tutaj.</p>
+                        <h2>Wybierz budynek na mapie, aby zobaczyć szczegóły</h2>
+                        <p>Informacje o wybranym budynku będą wyświetlane tutaj.</p>
                 </div>
+
             </div>
         </div>
     }
