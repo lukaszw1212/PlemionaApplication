@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Dołącz do frakcji";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <h1>Dołącz do frakcji</h1>
+    <form asp-action="JoinFraction" method="post">
+        <div class="form-group">
+            <label for="fractionId">Wybierz frakcję:</label>
+            <select class="form-control" id="fractionId" name="fractionId">
+                @foreach (var fraction in ViewBag.Fractions)
+                {
+                    <option value="@fraction.Id">@fraction.Name</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Dołącz</button>
+    </form>
+</div>
+

@@ -213,13 +213,13 @@ namespace PlemionaApplication.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-
             var player = await _context.Players.FirstOrDefaultAsync(p => p.UserId == userId);
+            var fraction = await _context.Fractions.FirstOrDefaultAsync(p => p.Id == player.FractionId);
             if (player == null)
             {
                 return NotFound();
             }
-
+            ViewBag.FractionName = fraction.Name;
             return View(player);
         }
 
@@ -272,5 +272,62 @@ namespace PlemionaApplication.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        // GET: Home/JoinFraction
+        public async Task<IActionResult> JoinFraction()
+        {
+            var fractions = await _context.Fractions.ToListAsync();
+            ViewBag.Fractions = fractions;
+            return View();
+        }
+
+        // POST: Home/JoinFraction
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> JoinFraction(int fractionId)
+        {
+            // Get the current user's ID from session or cookie
+            var userId = Request.Cookies["UserId"];
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account"); // Handle if user is not logged in
+            }
+
+            // Find the user by ID
+            var user = await _context.User.FindAsync(int.Parse(userId));
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account"); // Handle if user not found
+            }
+
+            // Find the player associated with the user
+            var player = await _context.Players
+                .Include(p => p.Fraction) // Include fraction data
+                .FirstOrDefaultAsync(p => p.UserId == user.Id);
+
+            if (player == null)
+            {
+                return RedirectToAction("Error"); // Handle if player not found
+            }
+
+            // Find the selected fraction
+            var fraction = await _context.Fractions.FindAsync(fractionId);
+            if (fraction == null)
+            {
+                return NotFound(); // Handle if fraction not found
+            }
+
+            // Update player's fraction
+            player.Fraction = fraction; // Assign selected fraction to player
+            player.FractionId = fraction.Id; // Assign fraction ID to player
+            _context.Players.Update(player);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Home"); // Redirect to home or appropriate page
+        }
+
+        // ... inne akcje kontrolera
     }
+
+    // ... inne akcje kontrolera
 }
