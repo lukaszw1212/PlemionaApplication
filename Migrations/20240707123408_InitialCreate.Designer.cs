@@ -12,8 +12,8 @@ using PlemionaApplication.Data;
 namespace PlemionaApplication.Migrations
 {
     [DbContext(typeof(PlemionaApplicationContext))]
-    [Migration("20240707113244_m1")]
-    partial class m1
+    [Migration("20240707123408_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -37,6 +37,5 @@ namespace MiniProjekt
             MaxGoldPerTime = 1000 + (Level-1) * (100 * Level);
             Time = 20 - (Level - 1) * 2;
         }
-
     }
 }
