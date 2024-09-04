@@ -8,30 +8,22 @@ namespace MiniProjekt
 {
     public class Trojan: Entity
     {
-        private int level = 1;
-        public override int Level
+        public void UpgradeLevel()
         {
-            get => level;
-            set
+            if (Level < 5) // Upewnij się, że maksymalny poziom to 5
             {
-                if (value < 5)
-                {
-                    level = value;
-                    UpdateProperties();
-                }
+                Level++;
+                UpdateProperties();
             }
         }
         private void UpdateProperties()
         {
-            MaxHP = (int)(MaxHP * 1.15);
+            MaxHP = (int)(MaxHP * 1.35);
             CurrentHP = MaxHP;
-            AttackSpeed = (int)(AttackSpeed * 1.3);
-            Damage = (int)(Damage * 1.2);
+            AttackSpeed = Math.Round(AttackSpeed * 1.2,2);
+            Damage = (int)(Damage * 1.3);
             PhysicalResistance = (int)(PhysicalResistance * 1.25);
             RangeResistance = (int)(RangeResistance * 1.25);
-        }
-        public Trojan() : base(1, "Trojan", 80, 80, 1, Enumerable.Damage.Physical, 0, 15, 15)
-        {
         }
     }
 }

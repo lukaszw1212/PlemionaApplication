@@ -9,7 +9,7 @@ using PlemionaApplication.Data;
 using PlemionaApplication.Entities;
 using MiniProjekt;
 using System.Security.Permissions;
-
+using MiniProjekt.Enumerable;
 namespace PlemionaApplication.Controllers
 {
     public class HomeController : Controller
@@ -50,21 +50,84 @@ namespace PlemionaApplication.Controllers
                 ViewBag.StoneAmount = stone.Amount;
                 ViewBag.IronAmount = iron.Amount;
                 ViewBag.WheatAmount = wheat.Amount;
-                //predkosci generowania
+                //predkosci generowania i ustawienie informacji o levelu
                 var townHall = _context.TownHall.FirstOrDefault(t => t.VillageId == village.Id);
                 ViewBag.TownHallSpeed = townHall.Time;
+                ViewBag.RatuszLevel = townHall.Level;
                 var sawmill = _context.Sawmill.FirstOrDefault(t => t.VillageId == village.Id);
-                if (sawmill != null) ViewBag.SawmillSpeed = sawmill.Time;
-                else ViewBag.SawmillSpeed = 30;
+                if (sawmill != null)
+                {
+                    ViewBag.SawmillSpeed = sawmill.Time;
+                    ViewBag.TartakLevel = sawmill.Level;
+                }
+                else
+                {
+                    ViewBag.SawmillSpeed = 30;
+                    ViewBag.TartakLevel = 0;
+                }
                 var ironmine = _context.IronMine.FirstOrDefault(t => t.VillageId == village.Id);
-                if (ironmine != null) ViewBag.IronMineSpeed = ironmine.Time;
-                else ViewBag.IronMineSpeed = 55;
+                if (ironmine != null)
+                {
+                    ViewBag.IronMineSpeed = ironmine.Time;
+                    ViewBag.ZelazoLevel = ironmine.Level;
+                }
+                else
+                {
+                    ViewBag.IronMineSpeed = 55;
+                    ViewBag.ZelazoLevel = 0;
+                }
                 var stonemine = _context.StoneMine.FirstOrDefault(t => t.VillageId == village.Id);
-                if (stonemine != null) ViewBag.StoneMineSpeed = stonemine.Time;
-                else ViewBag.StoneMineSpeed = 35;
+                if (stonemine != null)
+                {
+                    ViewBag.StoneMineSpeed = stonemine.Time;
+                    ViewBag.KamienLevel = stonemine.Level;
+                }
+                else
+                {
+                    ViewBag.StoneMineSpeed = 35;
+                    ViewBag.KamienLevel = 0;
+                }
                 var grainfarm = _context.GrainFarm.FirstOrDefault(t => t.VillageId == village.Id);
-                if (grainfarm != null) ViewBag.GrainFarmSpeed = grainfarm.Time;
-                else ViewBag.GrainFarmSpeed = 40;
+                if (grainfarm != null)
+                {
+                    ViewBag.FarmaLevel = grainfarm.Level;
+                    ViewBag.GrainFarmSpeed = grainfarm.Time;
+                }
+                else
+                {
+                    ViewBag.FarmaLevel = 0;
+                    ViewBag.GrainFarmSpeed = 40;
+                }
+
+                //dalsze budynki i przypisywanie levelu
+                var barracks = _context.Barracks.FirstOrDefault(t => t.VillageId == village.Id);
+                if (barracks != null)
+                    ViewBag.KoszaryLevel = barracks.Level;
+                else
+                    ViewBag.KoszaryLevel = 0;
+
+                var armory = _context.Armory.FirstOrDefault(t => t.VillageId == village.Id);
+                if (barracks != null)
+                    ViewBag.ZbrojowniaLevel = barracks.Level;
+                else ViewBag.ZbrojowniaLevel = 0;
+
+                var walls = _context.DefensiveWalls.FirstOrDefault(t => t.Village.Id == village.Id);
+                if (walls != null)
+                    ViewBag.MuryLevel = walls.Level;
+                else ViewBag.MuryLevel = 0;
+
+                var silo = _context.Silo.FirstOrDefault(t => t.Village.Id == village.Id);
+                if (silo != null)
+                    ViewBag.SilosLevel = silo.Level;
+                else
+                    ViewBag.SilosLevel = 0;
+
+                var horsestable = _context.HorseStable.FirstOrDefault(t => t.Village.Id == village.Id);
+                if (horsestable != null)
+                    ViewBag.StajniaLevel = horsestable.Level;
+                else
+                    ViewBag.StajniaLevel = 0;
+
                 //sprawdzenie czy budynek jest wybudowany
                 ViewBag.IsSawmillBuilt = _context.Sawmill.Any(b => b.VillageId == village.Id) ? 1 : 0;
                 ViewBag.IsBarracksBuilt = _context.Barracks.Any(b => b.VillageId == village.Id) ? 1 : 0;
@@ -76,7 +139,16 @@ namespace PlemionaApplication.Controllers
                 ViewBag.IsSiloBuilt = _context.Silo.Any(b => b.VillageId == village.Id) ? 1 : 0;
                 ViewBag.IsHorseStableBuilt = _context.HorseStable.Any(b => b.VillageId == village.Id) ? 1 : 0;
                 ViewBag.IsTownhallBuilt = _context.TownHall.Any(b => b.VillageId == village.Id) ? 1 : 0;
-
+                // sprawdzenie poziomu gracza
+                ViewBag.PlayerLevel = player.Level;
+                ViewBag.PlayerExp = player.CurrentExperience;
+                // sprawdzenie iloœci jednostek
+                ViewBag.ArcherAmount = _context.Archer.Count(a => a.VillageId == village.Id);
+                ViewBag.CatapultAmount = _context.Catapult.Count(a => a.VillageId == village.Id);
+                ViewBag.HussarAmount = _context.Hussar.Count(a => a.VillageId == village.Id);
+                ViewBag.KamikadzeAmount = _context.Kamikadze.Count(a => a.VillageId == village.Id);
+                ViewBag.TrojanAmount = _context.Trojan.Count(a => a.VillageId == village.Id);
+                ViewBag.WarriorAmount = _context.Warrior.Count(a => a.VillageId == village.Id);
             }
             
             return View();
@@ -117,17 +189,30 @@ namespace PlemionaApplication.Controllers
             if (woodResource != null)
             {
                 var sawmill = _context.Sawmill.FirstOrDefault(t => t.VillageId == village.Id);
+                var silo = _context.Silo.FirstOrDefault(t => t.VillageId == village.Id);
                 if (sawmill != null)
                 {
-                    if (woodResource.Amount < sawmill.MaxWoodPerTime)
+                    if (silo != null)
                     {
-                        woodResource.Amount += sawmill.GenerateWoodPerTime;
-                        _context.SaveChanges();
+                        if (woodResource.Amount < sawmill.MaxWoodPerTime + (silo.Level * 400))
+                        {
+                            woodResource.Amount += sawmill.GenerateWoodPerTime;
+                            _context.SaveChanges();
+                        }
+                    }
+                    else
+                    {
+                        if (woodResource.Amount < sawmill.MaxWoodPerTime)
+                        {
+                            woodResource.Amount += sawmill.GenerateWoodPerTime;
+                            _context.SaveChanges();
+                        }
                     }
                 }
             }
             return PartialView("_WoodAmountPartial", woodResource?.Amount ?? 0);
         }
+        [HttpPost]
         public async Task<IActionResult> CollectIron()
         {
             string userName = User.Identity.Name;
@@ -139,17 +224,30 @@ namespace PlemionaApplication.Controllers
             if (ironResource != null)
             {
                 var ironmine = _context.IronMine.FirstOrDefault(t => t.VillageId == village.Id);
+                var silo = _context.Silo.FirstOrDefault(t => t.VillageId == village.Id);
                 if (ironmine != null)
                 {
-                    if (ironResource.Amount < ironmine.MaxIronPerTime)
+                    if (silo != null)
                     {
-                        ironResource.Amount += ironmine.GenerateIronPerTime;
-                        _context.SaveChanges();
+                        if (ironResource.Amount < ironmine.MaxIronPerTime + (silo.Level * 400))
+                        {
+                            ironResource.Amount += ironmine.GenerateIronPerTime;
+                            _context.SaveChanges();
+                        }
+                    }
+                    else
+                    {
+                        if (ironResource.Amount < ironmine.MaxIronPerTime)
+                        {
+                            ironResource.Amount += ironmine.GenerateIronPerTime;
+                            _context.SaveChanges();
+                        }
                     }
                 }
             }
             return PartialView("_IronAmountPartial", ironResource?.Amount ?? 0);
         }
+        [HttpPost]
         public async Task<IActionResult> CollectStone()
         {
             string userName = User.Identity.Name;
@@ -161,17 +259,30 @@ namespace PlemionaApplication.Controllers
             if (stoneResource != null)
             {
                 var stonemine = _context.StoneMine.FirstOrDefault(t => t.VillageId == village.Id);
+                var silo = _context.Silo.FirstOrDefault(t => t.VillageId == village.Id);
                 if (stonemine != null)
                 {
-                    if (stoneResource.Amount < stonemine.MaxStonePerTime)
+                    if (silo != null)
                     {
-                        stoneResource.Amount += stonemine.GenerateStonePerTime;
-                        _context.SaveChanges();
+                        if (stoneResource.Amount < stonemine.MaxStonePerTime + (silo.Level * 400))
+                        {
+                            stoneResource.Amount += stonemine.GenerateStonePerTime;
+                            _context.SaveChanges();
+                        }
+                    }
+                    else
+                    {
+                        if (stoneResource.Amount < stonemine.MaxStonePerTime)
+                        {
+                            stoneResource.Amount += stonemine.GenerateStonePerTime;
+                            _context.SaveChanges();
+                        }
                     }
                 }
             }
             return PartialView("_StoneAmountPartial", stoneResource?.Amount ?? 0);
         }
+        [HttpPost]
         public async Task<IActionResult> CollectWheat()
         {
             string userName = User.Identity.Name;
@@ -183,17 +294,31 @@ namespace PlemionaApplication.Controllers
             if (wheatResource != null)
             {
                 var grainfarm = _context.GrainFarm.FirstOrDefault(t => t.VillageId == village.Id);
+                var silo = _context.Silo.FirstOrDefault(t => t.VillageId == village.Id);
                 if (grainfarm != null)
                 {
-                    if (wheatResource.Amount < grainfarm.MaxFarmPerTime)
+                    if (silo != null)
                     {
-                        wheatResource.Amount += grainfarm.GenerateWheatPerTime;
-                        _context.SaveChanges();
+                        if (wheatResource.Amount < grainfarm.MaxFarmPerTime + (silo.Level * 400))
+                        {
+                            wheatResource.Amount += grainfarm.GenerateWheatPerTime;
+                            _context.SaveChanges();
+                        }
+                    }
+                    else
+                    {
+                        if (wheatResource.Amount < grainfarm.MaxFarmPerTime)
+                        {
+                            wheatResource.Amount += grainfarm.GenerateWheatPerTime;
+                            _context.SaveChanges();
+                        }
                     }
                 }
             }
             return PartialView("_WheatAmountPartial", wheatResource?.Amount ?? 0);
         }
+
+        
         [HttpGet]
         public IActionResult Login()
         {
@@ -358,7 +483,15 @@ namespace PlemionaApplication.Controllers
             {
                 return NotFound();
             }
-            ViewBag.FractionName = fraction.Name;
+            if (fraction != null)
+            {
+                ViewBag.FractionName = fraction.Name;
+            }
+            else
+            {
+                ViewBag.FractionName = " ";
+            }
+            
             return View(player);
         }
 

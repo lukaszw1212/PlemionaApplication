@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlemionaApplication.Data;
 
@@ -11,9 +12,11 @@ using PlemionaApplication.Data;
 namespace PlemionaApplication.Migrations
 {
     [DbContext(typeof(PlemionaApplicationContext))]
-    partial class PlemionaApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20240828133407_NewMigration")]
+    partial class NewMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -147,9 +150,7 @@ namespace PlemionaApplication.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Level")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
+                        .HasColumnType("int");
 
                     b.Property<int>("MaxHP")
                         .HasColumnType("int");
@@ -619,13 +620,6 @@ namespace PlemionaApplication.Migrations
                     b.HasDiscriminator().HasValue("Archer");
                 });
 
-            modelBuilder.Entity("MiniProjekt.Catapult", b =>
-                {
-                    b.HasBaseType("MiniProjekt.Entity");
-
-                    b.HasDiscriminator().HasValue("Catapult");
-                });
-
             modelBuilder.Entity("MiniProjekt.Hussar", b =>
                 {
                     b.HasBaseType("MiniProjekt.Entity");
@@ -652,6 +646,13 @@ namespace PlemionaApplication.Migrations
                     b.HasBaseType("MiniProjekt.Entity");
 
                     b.HasDiscriminator().HasValue("Warrior");
+                });
+
+            modelBuilder.Entity("PlemionaApplication.Models.Building.Catapult", b =>
+                {
+                    b.HasBaseType("MiniProjekt.Entity");
+
+                    b.HasDiscriminator().HasValue("Catapult");
                 });
 
             modelBuilder.Entity("MiniProjekt.Armory", b =>

@@ -7,7 +7,7 @@ namespace MiniProjekt
     public abstract class Entity
     {
         public int Id { get; set; }
-        public virtual int Level { get; set; }
+        public int Level { get; set; }
         [Required]
 
         public string Name { get; set; }
@@ -22,18 +22,6 @@ namespace MiniProjekt
 
         [ForeignKey("VillageId")]
         public Village Village { get; set; }
-        protected Entity(int level, string name, int currentHp, int maxHp, double attackSpeed, Damage damageType, int damage, int physicalResistance, int rangeResistance)
-        {
-            Level = level;
-            Name = name;
-            CurrentHP = currentHp;
-            MaxHP = maxHp;
-            AttackSpeed = attackSpeed;
-            DamageType = damageType;
-            Damage = damage;
-            PhysicalResistance = physicalResistance;
-            RangeResistance = rangeResistance;
-        }
     }
   
 }

@@ -8,30 +8,22 @@ namespace MiniProjekt
 {
     public class Hussar: Entity
     {
-        private int level = 1;
-        public override int Level
+        public void UpgradeLevel()
         {
-            get => level;
-            set
+            if (Level < 5) // Upewnij się, że maksymalny poziom to 5
             {
-                if (value < 5)
-                {
-                    level = value;
-                    UpdateProperties();
-                }
+                Level++;
+                UpdateProperties();
             }
         }
         private void UpdateProperties()
         {
-            MaxHP = (int)(MaxHP * 1.15);
+            MaxHP = (int)(MaxHP * 1.3);
             CurrentHP = MaxHP;
-            AttackSpeed = (int)(AttackSpeed * 1.3);
-            Damage = (int)(Damage * 1.2);
-            PhysicalResistance = (int)(PhysicalResistance * 1.25);
-            RangeResistance = (int)(RangeResistance * 1.25);
-        }
-        public Hussar() : base(1, "Hussar", 20, 20, 2, Enumerable.Damage.Physical, 20, 6, 1)
-        {
+            AttackSpeed = Math.Round(AttackSpeed * 1.15,2);
+            Damage = (int)(Damage * 1.3);
+            PhysicalResistance = (int)(PhysicalResistance * 1.4);
+            RangeResistance = (int)(RangeResistance * 1.4);
         }
     }
 }

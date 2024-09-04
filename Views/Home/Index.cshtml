@@ -37,6 +37,20 @@
             font-size: 24px;
         }
 
+        .player-bar {
+            background-color: sandybrown;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 24px;
+        }
+
+        .player {
+            display: flex;
+            align-items: center;
+        }
         .content {
             flex: 1;
             display: flex;
@@ -111,8 +125,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         function showBuildingInfo(buildingName) {
-            var infoDiv = document.getElementById('buildingInfo');
-            infoDiv.innerHTML = '<h2>' + buildingName + '</h2><p>Informacje o budynku ' + buildingName + '.</p>';
+            var infoDelete = document.getElementById('infoDelete');
+            var infoDelete2 = document.getElementById('infoDelete2');
+            infoDelete.innerHTML = "";
+            infoDelete2.innerHTML = "";
             var resources = {
                 "Tartak": { Gold: 100 },
                 "Koszary": { Wood: 80, Gold: 150, Wheat: 100 },
@@ -124,7 +140,19 @@
                 "Silos": { Gold: 250, Wood: 300 },
                 "Stajnia": { Wheat: 300, Gold: 200, Wood: 200 },
             };
-
+            var resourcesForUpgrade = {
+                "Ratusz": { Gold: 200 * @ViewBag.RatuszLevel},
+                "Tartak": { Gold: 100 * @ViewBag.TartakLevel },
+                "Koszary": { Wood: 80 * @ViewBag.KoszaryLevel, Gold: 150 * @ViewBag.KoszaryLevel , Wheat: 100 * @ViewBag.KoszaryLevel },
+                "Zbrojownia": { Iron: 100 * @ViewBag.ZbrojowniaLevel, Stone: 200 * @ViewBag.ZbrojowniaLevel, Gold: 250 * @ViewBag.ZbrojowniaLevel },
+                "Farma": { Wood: 80 * @ViewBag.FarmaLevel, Gold: 200 * @ViewBag.FarmaLevel },
+                "Kopalnia Kamienia": { Gold: 150 * @ViewBag.KamienLevel },
+                "Kopalnia Żelaza": { Stone: 100 * @ViewBag.ZelazoLevel, Gold: 150 * @ViewBag.KamienLevel },
+                "Mury Obronne": { Iron: 100 * @ViewBag.MuryLevel, Wood: 100 * @ViewBag.MuryLevel, Stone: 100 * @ViewBag.MuryLevel },
+                "Silos": { Gold: 250 * @ViewBag.SilosLevel, Wood: 300 * @ViewBag.SilosLevel },
+                "Stajnia": { Wheat: 300 * @ViewBag.StajniaLevel, Gold: 200 * @ViewBag.StajniaLevel, Wood: 200 * @ViewBag.StajniaLevel },
+            };
+            // budowanie
             var resourceInfo = resources[buildingName];
             var resourceText = "<ul>";
             for (var resource in resourceInfo) {
@@ -132,70 +160,290 @@
                 resourceText += "<li>" + "<img src=/images/" + imgName + ".png" + ">" + resource + ": " + resourceInfo[resource];
             }
             resourceText += "</ul>";
-
-            infoDiv.innerHTML = '<h2>' + buildingName + '</h2><p>Wymagane surowce:</p>' + resourceText;
-            switch (buildingName) 
-            { 
+            // ulepszenie
+            var upgradeInfo = resourcesForUpgrade[buildingName];
+            var upgradeText = "<ul>";
+            for (var resource in upgradeInfo) {
+                var imgName = resource.toLowerCase();
+                upgradeText += "<li>" + "<img src=/images/" + imgName + ".png" + ">" + resource + ": " + upgradeInfo[resource];
+            }
+            upgradeText += "</ul>";
+            var cardDiv = document.getElementById('cardBuildInfo');
+            cardDiv.innerHTML = '<h5 class="card-header">Budowanie</h5>';
+            cardDiv.innerHTML += '<div class="card-body">';
+            cardDiv.innerHTML += '<h5 class="card-title">' + buildingName + '</h5> <p class="card-text">Wymagane surowce: ' + resourceText + '</p>';
+            switch (buildingName) {
                 case "Tartak":
                     if (@ViewBag.IsSawmillBuilt == 0)
-                        infoDiv.innerHTML += '<button type="button" id=(\'' + buildingName + '\') class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                        cardDiv.innerHTML += '<button type="button" id=(\'' + buildingName + '\') class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
                     else
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
                     break;
                 case "Koszary":
                     if (@ViewBag.IsBarracksBuilt == 0)
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
                     else
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
                     break;
                 case "Zbrojownia":
                     if (@ViewBag.IsArmoryBuilt == 0)
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
                     else
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
                     break;
                 case "Farma":
                     if (@ViewBag.IsGrainFarmBuilt == 0)
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
                     else
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
                     break;
                 case "Kopalnia Kamienia":
                     if (@ViewBag.IsStoneMineBuilt == 0)
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
                     else
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
                     break;
                 case "Kopalnia Żelaza":
                     if (@ViewBag.IsIronMineBuilt == 0)
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
                     else
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
                     break;
                 case "Mury Obronne":
                     if (@ViewBag.IsDefensiveWallsBuilt == 0)
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
                     else
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
                     break;
                 case "Silos":
                     if (@ViewBag.IsSiloBuilt == 0)
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
                     else
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
                     break;
                 case "Stajnia":
                     if (@ViewBag.IsHorseStableBuilt == 0)
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
                     else
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
                     break;
                 case "Ratusz":
                     if (@ViewBag.IsTownhallBuilt == 0)
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-success" onclick="buildBuilding(\'' + buildingName + '\')">Wybuduj!</button>';
                     else
-                        infoDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                        cardDiv.innerHTML += '<button type="button" class="btn btn-outline-danger">Budynek już wybudowany!</button>';
+                    break;
             }
+            cardDiv.innerHTML += '</div>';
+            cardDiv.innerHTML += '</div>';
+            cardDiv.innerHTML += '</div>';
+            var upgradeDiv = document.getElementById('cardUpgradeInfo');
+            upgradeDiv.innerHTML = '<h5 class="card-header">' + 'Ulepszanie' + '</h5>';
+            upgradeDiv.innerHTML += '<div class="card-body">';
+            switch (buildingName) {
+                case "Tartak":
+                    if (@ViewBag.TartakLevel != "0") {
+                        upgradeDiv.innerHTML += '<h5 class="card-title">' + "Level " + @ViewBag.TartakLevel + '</h5> <p class="card-text">Wymagane surowce: ' + upgradeText + '</p>';
+                        upgradeDiv.innerHTML += '<button type="button" class="btn btn-light" onclick="upgradeBuilding(\'' + buildingName + '\')">Ulepsz!</button>';
+                    }
+                    break;
+                case "Koszary":
+                    if (@ViewBag.KoszaryLevel != "0") {
+                        upgradeDiv.innerHTML += '<h5 class="card-title">' + "Level " + @ViewBag.KoszaryLevel + '</h5> <p class="card-text">Wymagane surowce: ' + upgradeText + '</p>';
+                        upgradeDiv.innerHTML += '<button type="button" class="btn btn-light" onclick="upgradeBuilding(\'' + buildingName + '\')">Ulepsz!</button>';
+                    }
+                    break;
+                case "Zbrojownia":
+                    if (@ViewBag.ZbrojowniaLevel != "0") {
+                        upgradeDiv.innerHTML += '<h5 class="card-title">' + "Level " + @ViewBag.ZbrojowniaLevel + '</h5> <p class="card-text">Wymagane surowce: ' + upgradeText + '</p>';
+                        upgradeDiv.innerHTML += '<button type="button" class="btn btn-light" onclick="upgradeBuilding(\'' + buildingName + '\')">Ulepsz!</button>';
+                    }
+                    break;
+                case "Farma":
+                    if (@ViewBag.FarmaLevel != "0") {
+                        upgradeDiv.innerHTML += '<h5 class="card-title">' + "Level " + @ViewBag.FarmaLevel + '</h5> <p class="card-text">Wymagane surowce: ' + upgradeText + '</p>';
+                        upgradeDiv.innerHTML += '<button type="button" class="btn btn-light" onclick="upgradeBuilding(\'' + buildingName + '\')">Ulepsz!</button>';
+                    }
+                    break;
+                case "Kopalnia Kamienia":
+                    if (@ViewBag.KamienLevel != "0") {
+                        upgradeDiv.innerHTML += '<h5 class="card-title">' + "Level " + @ViewBag.KamienLevel + '</h5> <p class="card-text">Wymagane surowce: ' + upgradeText + '</p>';
+                        upgradeDiv.innerHTML += '<button type="button" class="btn btn-light" onclick="upgradeBuilding(\'' + buildingName + '\')">Ulepsz!</button>';
+                    }
+                    break;
+                case "Kopalnia Żelaza":
+                    if (@ViewBag.ZelazoLevel != "0") {
+                        upgradeDiv.innerHTML += '<h5 class="card-title">' + "Level " + @ViewBag.ZelazoLevel + '</h5> <p class="card-text">Wymagane surowce: ' + upgradeText + '</p>';
+                        upgradeDiv.innerHTML += '<button type="button" class="btn btn-light" onclick="upgradeBuilding(\'' + buildingName + '\')">Ulepsz!</button>';
+                    }
+                    break;
+                case "Mury Obronne":
+                    if (@ViewBag.MuryLevel != "0") {
+                        upgradeDiv.innerHTML += '<h5 class="card-title">' + "Level " + @ViewBag.MuryLevel + '</h5> <p class="card-text">Wymagane surowce: ' + upgradeText + '</p>';
+                        upgradeDiv.innerHTML += '<button type="button" class="btn btn-light" onclick="upgradeBuilding(\'' + buildingName + '\')">Ulepsz!</button>';
+                    }
+                    break;
+                case "Silos":
+                    if (@ViewBag.SilosLevel != "0") {
+                        upgradeDiv.innerHTML += '<h5 class="card-title">' + "Level " + @ViewBag.SilosLevel + '</h5> <p class="card-text">Wymagane surowce: ' + upgradeText + '</p>';
+                        upgradeDiv.innerHTML += '<button type="button" class="btn btn-light" onclick="upgradeBuilding(\'' + buildingName + '\')">Ulepsz!</button>';
+                    }
+                    break;
+                case "Stajnia":
+                    if (@ViewBag.StajniaLevel != "0") {
+                        upgradeDiv.innerHTML += '<h5 class="card-title">' + "Level " + @ViewBag.StajniaLevel + '</h5> <p class="card-text">Wymagane surowce: ' + upgradeText + '</p>';
+                        upgradeDiv.innerHTML += '<button type="button" class="btn btn-light" onclick="upgradeBuilding(\'' + buildingName + '\')">Ulepsz!</button>';
+                    }
+                    break;
+                case "Ratusz":
+                    upgradeDiv.innerHTML += '<h5 class="card-title">' + "Level " + @ViewBag.RatuszLevel + '</h5> <p class="card-text">Wymagane surowce: ' + upgradeText + '</p>';
+                    upgradeDiv.innerHTML += '<button type="button" class="btn btn-light" onclick="upgradeBuilding(\'' + buildingName + '\')">Ulepsz!</button>';
+                    break;
+            }
+
+            upgradeDiv.innerHTML += '</div>';
+            upgradeDiv.innerHTML += '</div>';
+            var barracksDiv = document.getElementById('cardBarracks');
+            if (buildingName == "Koszary") {
+                if (@ViewBag.IsBarracksBuilt != 0) {
+                    let htmlContent = `
+                    <div class="card-header">
+                        Rekrutacja
+                    </div>
+                    <div class="card-body">
+                                    <form id="recruitmentForm" action="/Recruitment/Submit" method="post" onsubmit="updateHiddenFields()">
+                            <div class="row">
+                                <!-- Column 1 -->
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label class="col-sm-6 col-form-label">Łucznicy 🏹</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" class="form-control" min="0" value="0" id="archers" name="Archers">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-6 col-form-label">Katapulty 🎯</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" class="form-control" min="0" value="0" id="catapults" name="Catapults">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-6 col-form-label">Husarzy 🐎</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" class="form-control" min="0" value="0" id="hussars" name="Hussars">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Column 2 -->
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label class="col-sm-6 col-form-label">Kamikadze 💣</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" class="form-control" min="0" value="0" id="kamikadze" name="Kamikadze">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-6 col-form-label">Trojan ♞</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" class="form-control" min="0" value="0" id="trojans" name="Trojans">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-6 col-form-label">Wojownicy ⚔️</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" class="form-control" min="0" value="0" id="warriors" name="Warriors">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Requirements section -->
+                            <div class="row">
+                                <div class="col-md-12 text-left">
+                                    <h5 class="card-title">Wymagania</h5>
+                                    <ul class="list-unstyled">
+                                                <li><img src="/images/gold.png" alt="Gold Icon"/> <span id="goldBarracks">0</span></li>
+                                                <li><img src="/images/wheat.png" alt="Wheat Icon"/> <span id="wheatBarracks">0</span></li>
+                                                <li><img src="/images/iron.png" alt="Iron Icon"/> <span id="ironBarracks">0</span></li>
+                                                <li><img src="/images/stone.png" alt="Stone Icon"/> <span id="stoneBarracks">0</span></li>
+                                                <li><img src="/images/wood.png" alt="Wood Icon"/> <span id="woodBarracks">0</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                                        <!-- Ukryte pola do przesyłania wartości surowców -->
+                        <input type="hidden" id="hiddenGoldRequired" name="GoldRequired">
+                        <input type="hidden" id="hiddenWheatRequired" name="WheatRequired">
+                        <input type="hidden" id="hiddenIronRequired" name="IronRequired">
+                        <input type="hidden" id="hiddenStoneRequired" name="StoneRequired">
+                        <input type="hidden" id="hiddenWoodRequired" name="WoodRequired">
+                            <!-- Recruit button -->
+                            <button type="submit" class="btn btn-primary">Rekrutuj!</button>
+                        </form>
+                    </div>
+                `;
+
+                    // Set the inner HTML all at once
+                    barracksDiv.innerHTML = htmlContent;
+                    addListener();
+                }
+                else {
+                    barracksDiv.innerHTML = '';
+                }
+            }
+            //zbrojownia
+            else if (buildingName == "Zbrojownia") {
+                barracksDiv.innerHTML = '';
+                if (@ViewBag.IsArmoryBuilt != 0) {
+                    let htmlContent = `
+                                            <div class="card-header">
+                                                Ulepszanie jednostek
+                                            </div>
+                                            <div class="card-body">
+                                                                         <form id="unitForm">
+                                                            <div class="form-group">
+                                                                <label for="unitTypeSelect">Wybierz typ jednostki:</label>
+                                                                <select class="form-control" id="unitTypeSelect">
+                                                                    <option value="" selected disabled>Wybierz typ jednostki...</option>
+                                                                    <option value="Archer">Łucznik</option>
+                                                                    <option value="Kamikadze">Kamikadze</option>
+                                                                    <option value="Warrior">Wojownik</option>
+                                                                    <option value="Trojan">Trojan</option>
+                                                                    <option value="Hussar">Husarz</option>
+                                                                    <option value="Catapult">Katapulta</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group mt-3">
+                                                            <label for="unitSelect">Wybierz jednostkę:</label>
+                                                            <select class="form-control" id="unitSelect" disabled>
+                                                            <option value="" selected disabled>Wybierz jednostkę...</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="mt-3" id="upgradeRequirements" style="display: none;">
+                                                        <h5>Wymagania do ulepszenia:</h5>
+                                                        <ul class="list-group">
+                                                                    <li class="list-group-item" id="goldRequirement"><img src="/images/gold.png">Złoto: <span class="cost"></span></li>
+                                                                    <li class="list-group-item" id="woodRequirement"><img src="/images/wood.png">Drewno: <span class="cost"></span></li>
+                                                                    <li class="list-group-item" id="stoneRequirement"><img src="/images/stone.png">Kamień: <span class="cost"></span></li>
+                                                                    <li class="list-group-item" id="ironRequirement"><img src="/images/iron.png">Żelazo: <span class="cost"></span></li>
+                                                                    <li class="list-group-item" id="wheatRequirement"><img src="/images/wheat.png">Zboże: <span class="cost"></span></li>
+                                                        </ul>
+                                                    </div>
+                                                             <button type="button" id="upgradeButton" class="btn btn-primary mt-3" style="display: none;">Ulepsz</button>
+                                                </form>
+                                            </div>
+                                        `;
+
+                    // Set the inner HTML all at once
+                    barracksDiv.innerHTML = htmlContent;
+                    loadArmory();
+                }
+            }
+                else {
+                    barracksDiv.innerHTML = '';
+                }
+
+            
         }
 
         function buildBuilding(buildingName) {
@@ -203,6 +451,11 @@
                 location.reload();
             });
             
+        }
+        function upgradeBuilding(buildingName) {
+            $.post('/Building/UpgradeBuilding', { buildingName: buildingName }, function () {
+                location.reload();
+            });
         }
         function collectGold() {
             $.post('/Home/CollectGold', function (data) {
@@ -229,6 +482,7 @@
                 $('#wheatAmount').html(data);
             });
         }
+        
         $(document).ready(function () {
             setInterval(collectGold, 250 * @ViewBag.TownHallSpeed); //zbieranie złota
             setInterval(collectWood, 250 * @ViewBag.SawmillSpeed); //zbieranie drewna
@@ -236,80 +490,338 @@
             setInterval(collectIron, 250 * @ViewBag.IronMineSpeed); //zbieranie zelaza
             setInterval(collectWheat, 250 * @ViewBag.GrainFarmSpeed); //zbieranie zboza
         });
+
+        // ------- Funkcje do baraków ------------
+
+        // obsługa baraków
+        const unitCosts = {
+            archers: { gold: 10, wheat: 5, stone: 2, wood: 1 },
+            catapults: { gold: 20, iron: 10, stone: 8, wood: 5 },
+            hussars: { gold: 15, wheat: 7, iron: 4, wood: 3 },
+            kamikadze: { gold: 15, wheat: 5, stone: 10, iron: 15 },
+            trojans: { gold: 18, wheat: 9, stone: 7, wood: 4, iron: 4 },
+            warriors: { gold: 8, wheat: 4 },
+        };
+
+        // Funkcja do aktualizowania surowców
+        function updateResources() {
+            let totalResources = { gold: 0, wheat: 0, stone: 0, wood: 0, iron: 0};
+
+            // Pętla do przeliczenia ilości surowców
+            Object.keys(unitCosts).forEach(unit => {
+                const count = parseInt(document.getElementById(unit).value) || 0;
+                const cost = unitCosts[unit];
+                totalResources.gold += (cost.gold || 0) * count;
+                totalResources.wheat += (cost.wheat || 0) * count;
+                totalResources.stone += (cost.stone || 0) * count;
+                totalResources.wood += (cost.wood || 0) * count;
+                totalResources.iron += (cost.iron || 0) * count;
+            });
+        
+            // Aktualizacja informacji o aktualnych wymaganiach
+            document.getElementById('goldBarracks').textContent = totalResources.gold;
+            document.getElementById('wheatBarracks').textContent = totalResources.wheat;
+            document.getElementById('stoneBarracks').textContent = totalResources.stone;
+            document.getElementById('woodBarracks').textContent = totalResources.wood;
+            document.getElementById('ironBarracks').textContent = totalResources.iron;
+        }
+        function addListener() {
+            // Add event listeners to each input to update resources on change
+            document.querySelectorAll('#recruitmentForm input[type="number"]').forEach(input => {
+                input.addEventListener('input', updateResources);
+            });
+        }
+        function updateHiddenFields() {
+            // Aktualizacja wartości ukrytych pól przed wysłaniem formularza
+            document.getElementById('hiddenGoldRequired').value = document.getElementById('goldBarracks').textContent;
+            document.getElementById('hiddenWheatRequired').value = document.getElementById('wheatBarracks').textContent;
+            document.getElementById('hiddenIronRequired').value = document.getElementById('ironBarracks').textContent;
+            document.getElementById('hiddenStoneRequired').value = document.getElementById('stoneBarracks').textContent;
+            document.getElementById('hiddenWoodRequired').value = document.getElementById('woodBarracks').textContent;
+        }
+
+        // ------- Funkcje do zbrojowni ------------
+
+        // Funkcja do ładowania jednostek z serwera i wyświetlania ich na liście
+        function loadArmory() {
+            document.getElementById('unitTypeSelect').addEventListener('change', function () {
+                const unitType = this.value;
+
+                if (unitType) {
+                    loadUnits(unitType);
+                }
+            });
+            // Dodanie listenera do przycisku "Ulepsz"
+            document.getElementById('upgradeButton').addEventListener('click', upgradeUnits);
+        }
+        function loadUnits(unitType) {
+            fetch(`/Armories/GetUnits?unitType=${unitType}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Błąd w pobieraniu jednostek: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    populateUnitSelect(data);
+                })
+                .catch(error => {
+                    console.error('Wystąpił problem:', error);
+                });
+        }
+        // Populate the unit select dropdown with available units
+        function populateUnitSelect(units) {
+            const unitSelect = document.getElementById('unitSelect');
+            unitSelect.innerHTML = '<option value="" selected disabled>Wybierz jednostkę...</option>';
+
+            units.forEach(unit => {
+                const option = document.createElement('option');
+                option.value = unit.id;
+                option.textContent = `${unit.name} (Poziom: ${unit.level})`;
+                unitSelect.appendChild(option);
+                option.setAttribute('id', "unitId");
+            });
+
+            unitSelect.disabled = false;
+            unitSelect.addEventListener('change', function () {
+                const selectedUnitId = this.value;
+                const selectedUnitType = document.getElementById('unitTypeSelect').value;
+                getUpgradeCost(selectedUnitType, selectedUnitId);
+            });
+        }
+
+        // Function to get the upgrade cost via AJAX
+        function getUpgradeCost(unitType, unitId) {
+            fetch(`/Armories/GetUpgradeCost/${unitType}/${unitId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Błąd w pobieraniu danych: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    displayUpgradeRequirements(data);
+                })
+                .catch(error => {
+                    console.error('Wystąpił problem:', error);
+                });
+        }
+
+        // Display upgrade requirements
+        function displayUpgradeRequirements(cost) {
+            document.getElementById('upgradeRequirements').style.display = 'block';
+            document.getElementById('upgradeButton').style.display = 'block';
+
+            document.getElementById('goldRequirement').querySelector('.cost').textContent = cost.gold || 0;
+            document.getElementById('woodRequirement').querySelector('.cost').textContent = cost.wood || 0;
+            document.getElementById('stoneRequirement').querySelector('.cost').textContent = cost.stone || 0;
+            document.getElementById('ironRequirement').querySelector('.cost').textContent = cost.iron || 0;
+            document.getElementById('wheatRequirement').querySelector('.cost').textContent = cost.wheat || 0;
+        }
+        // Funkcja do ulepszania
+        function upgradeUnits() {
+            const unitType = document.getElementById('unitTypeSelect').value;
+            const unitId = document.getElementById('unitSelect').value;
+            if (!unitType || !unitId) {
+                alert('Wybierz typ i jednostkę do ulepszenia.');
+                return;
+            }
+
+            // AJAX request do kontrolera UpgradeUnit
+            fetch(`/Armories/UpgradeUnit/${unitType}/${unitId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Błąd w trakcie ulepszania jednostki: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+
+                    alert(data.success + ' Nowy poziom: ' + data.newLevel);
+                    // Opcjonalne: odśwież listę jednostek po ulepszeniu
+                    loadUnits(unitType);
+                })
+                .catch(error => {
+                    console.error('Wystąpił problem podczas ulepszania:', error);
+                });
+        }
     </script>
 </head>
 <body>
     @if (User.Identity.IsAuthenticated)
     {
-        <div class="container">
-            <div class="header">
-                @ViewBag.VillageName
-            </div>
+        var requiredExp = @ViewBag.PlayerLevel * 20;
+        var dividedExp = @Math.Round(Decimal.Divide(@ViewBag.PlayerExp, requiredExp),2);
+        decimal percentExp = dividedExp * 100;
+        var percent = ((int)percentExp) + "%";
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-auto bg-light sticky-top">
+                    <div class="d-flex flex-sm-column flex-row flex-nowrap bg-light align-items-center sticky-top">
+                        <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
+                            <li class="nav-item">
+                                <span class="ms-1 d-none d-sm-inline">
+                                    @ViewBag.VillageName
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <span class="ms-1 d-none d-sm-inline">
+                                    Level: @ViewBag.PlayerLevel
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <span class="ms-1 d-none d-sm-inline">
+                                    Exp:
+                                </span>
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: @percent" aria-valuenow="@percentExp" aria-valuemin="0" aria-valuemax="@requiredExp">@percent</div>
+                                    </div>
+                            </li>
+                            <li>
+                                <img src="/images/archer.png" width="25px" height="25px"/>
+                                <span class="ms-1 d-none d-sm-inline">
+                                    Łucznicy: @ViewBag.ArcherAmount
+                                </span>
+                            </li>
+                            <li>
+                                <img src="/images/catapult.png" width="25px" height="25px"/>
+                                <span class="ms-1 d-none d-sm-inline">
+                                    Katapulty: @ViewBag.CatapultAmount
+                                </span>
+                            </li>
+                            <li>
+                                <img src="/images/hussar.png" width="25px" height="25px" />
+                                <span class="ms-1 d-none d-sm-inline">
+                                    Husarzy: @ViewBag.HussarAmount
+                                </span>
+                            </li>
+                            <li>
+                                <img src="/images/kamikaze.png" width="25px" height="25px" />
+                                <span class="ms-1 d-none d-sm-inline">
+                                    Kamikadze: @ViewBag.KamikadzeAmount
+                                </span>
+                            </li>
+                            <li>
+                                <img src="/images/trojan.png" width="25px" height="25px" />
+                                <span class="ms-1 d-none d-sm-inline">
+                                    Trojan: @ViewBag.TrojanAmount
+                                </span>
+                            </li>
+                            <li>
+                                <img src="/images/warrior.png" width="25px" height="25px" />
+                                <span class="ms-1 d-none d-sm-inline">
+                                    Wojownicy: @ViewBag.WarriorAmount
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm p-3 min-vh-100">
+                    <div class="container">
+                        <div class="player-bar">
+                            <div class="player">
+                                @ViewBag.VillageName
+                            </div>
+                            <div class="player">
+                                Level: @ViewBag.PlayerLevel
+                                Exp: @ViewBag.PlayerExp / @requiredExp
+                            </div>
+                        </div>
 
-            <div class="resource-bar">
-                <div class="resource">
-                    <img src="/images/gold.png" alt="Gold" />
-                    <span id="goldAmount">
-                        @{
-                           @Html.Partial("_GoldAmountPartial", goldAmount)
-                        }
-                    </span>
-                </div>
-                <div class="resource">
-                    <img src="/images/iron.png" alt="Iron" />
-                    <span id="ironAmount">
-                        @{
-                            @Html.Partial("_IronAmountPartial", ironAmount)
-                        }
-                    </span>
-                </div>
-                <div class="resource">
-                    <img src="/images/stone.png" alt="Stone" />
-                    <span id="stoneAmount">
-                        @{
-                            @Html.Partial("_StoneAmountPartial", stoneAmount)
-                        }
-                    </span>
-                </div>
-                <div class="resource">
-                    <img src="/images/wheat.png" alt="Wheat" />
-                    <span id="wheatAmount">
-                        @{
-                            @Html.Partial("_WheatAmountPartial", wheatAmount)
-                        }
-                    </span>
-                </div>
-                <div class="resource">
-                    <img src="/images/wood.png" alt="Wood" />
-                    <span id="woodAmount">
-                        @{
-                            @Html.Partial("_WoodAmountPartial", woodAmount)
-                        }
-                    </span>
-                </div>
-            </div>
+                        <div class="resource-bar">
+                            <div class="resource">
+                                <img src="/images/gold.png" alt="Gold" />
+                                <span id="goldAmount">
+                                    @{
+                                                                            @Html.Partial("_GoldAmountPartial", goldAmount)
+                                    }
+                                </span>
+                            </div>
+                            <div class="resource">
+                                <img src="/images/iron.png" alt="Iron" />
+                                <span id="ironAmount">
+                                    @{
+                                                                            @Html.Partial("_IronAmountPartial", ironAmount)
+                                    }
+                                </span>
+                            </div>
+                            <div class="resource">
+                                <img src="/images/stone.png" alt="Stone" />
+                                <span id="stoneAmount">
+                                    @{
+                                                                            @Html.Partial("_StoneAmountPartial", stoneAmount)
+                                    }
+                                </span>
+                            </div>
+                            <div class="resource">
+                                <img src="/images/wheat.png" alt="Wheat" />
+                                <span id="wheatAmount">
+                                    @{
+                                                                            @Html.Partial("_WheatAmountPartial", wheatAmount)
+                                    }
+                                </span>
+                            </div>
+                            <div class="resource">
+                                <img src="/images/wood.png" alt="Wood" />
+                                <span id="woodAmount">
+                                    @{
+                                                                            @Html.Partial("_WoodAmountPartial", woodAmount)
+                                    }
+                                </span>
+                            </div>
+                        </div>
 
-            <div class="content">
-                <div class="map">
-                    <div class="building" style="top: 10%; left: 10%;" onclick="showBuildingInfo('Tartak', this)"><img src="/images/sawmill.png" alt="Tartak"/></div>
-                    <div class="building" style="top: 20%; left: 30%;" onclick="showBuildingInfo('Koszary', this)"><img src="/images/barracks.png" alt="Koszary" /></div>
-                    <div class="building" style="top: 30%; left: 50%;" onclick="showBuildingInfo('Zbrojownia', this)"><img src="/images/armory.png" alt="Zbrojownia" /></div>
-                    <div class="building" style="top: 40%; left: 70%;" onclick="showBuildingInfo('Farma', this)"><img src="/images/grainfarm.png" alt="Farma" /></div>
-                    <div class="building" style="top: 50%; left: 10%;" onclick="showBuildingInfo('Kopalnia Kamienia', this)"><img src="/images/stonemine.png" alt="Kopalnia kamienia" /></div>
-                    <div class="building" style="top: 60%; left: 30%;" onclick="showBuildingInfo('Kopalnia Żelaza', this)"><img src="/images/ironmine.png" alt="Kopalnia żelaza" /></div>
-                    <div class="building" style="top: 50%; left: 50%;" onclick="showBuildingInfo('Ratusz', this)"><img src="/images/city_hall.png" alt="Ratusz" /></div>
-                    <div class="building" style="top: 70%; left: 70%;" onclick="showBuildingInfo('Mury Obronne', this)"><img src="/images/wall.png" alt="Mury obronne" /></div>
-                    <div class="building" style="top: 80%; left: 10%;" onclick="showBuildingInfo('Silos', this)"><img src="/images/silo.png" alt="Silos" /></div>
-                    <div class="building" style="top: 90%; left: 30%;" onclick="showBuildingInfo('Stajnia', this)"><img src="/images/horses.png" alt="Stajnia" /></div>
-                </div>
+                        <div class="content">
+                            <div class="map">
+                                <div class="building" style="top: 10%; left: 10%;" onclick="showBuildingInfo('Tartak', this)"><img src="/images/sawmill.png" alt="Tartak" /></div>
+                                <div class="building" style="top: 20%; left: 30%;" onclick="showBuildingInfo('Koszary', this)"><img src="/images/barracks.png" alt="Koszary" /></div>
+                                <div class="building" style="top: 30%; left: 50%;" onclick="showBuildingInfo('Zbrojownia', this)"><img src="/images/armory.png" alt="Zbrojownia" /></div>
+                                <div class="building" style="top: 40%; left: 70%;" onclick="showBuildingInfo('Farma', this)"><img src="/images/grainfarm.png" alt="Farma" /></div>
+                                <div class="building" style="top: 50%; left: 10%;" onclick="showBuildingInfo('Kopalnia Kamienia', this)"><img src="/images/stonemine.png" alt="Kopalnia kamienia" /></div>
+                                <div class="building" style="top: 60%; left: 30%;" onclick="showBuildingInfo('Kopalnia Żelaza', this)"><img src="/images/ironmine.png" alt="Kopalnia żelaza" /></div>
+                                <div class="building" style="top: 50%; left: 50%;" onclick="showBuildingInfo('Ratusz', this)"><img src="/images/city_hall.png" alt="Ratusz" /></div>
+                                <div class="building" style="top: 70%; left: 70%;" onclick="showBuildingInfo('Mury Obronne', this)"><img src="/images/wall.png" alt="Mury obronne" /></div>
+                                <div class="building" style="top: 80%; left: 10%;" onclick="showBuildingInfo('Silos', this)"><img src="/images/silo.png" alt="Silos" /></div>
+                                <div class="building" style="top: 90%; left: 30%;" onclick="showBuildingInfo('Stajnia', this)"><img src="/images/horses.png" alt="Stajnia" /></div>
+                            </div>
 
-                <div class="info" id="buildingInfo">
-                        <h2>Wybierz budynek na mapie, aby zobaczyć szczegóły</h2>
-                        <p>Informacje o wybranym budynku będą wyświetlane tutaj.</p>
+                            <div class="container" id="buildingInfo">
+                                <h2 id="infoDelete">Wybierz budynek na mapie, aby zobaczyć szczegóły</h2>
+                                <p id="infoDelete2">Informacje o wybranym budynku będą wyświetlane tutaj.</p>
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <div class="card text-center" id="cardBuildInfo"></div>
+                                    </div>
+                                    <div class="col-sm">
+                                        <div class="card text-center text-white bg-warning mb-3" id="cardUpgradeInfo"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <div class="card text-center text-white bg-info mb-3" id="cardBarracks">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
             </div>
         </div>
+
+        
     }
     else
     {

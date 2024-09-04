@@ -8,30 +8,22 @@ namespace MiniProjekt
 {
     public class Warrior: Entity
     {
-        private int level = 1;
-        public override int Level
+        public void UpgradeLevel()
         {
-            get => level;
-            set
+            if (Level < 5) // Upewnij się, że maksymalny poziom to 5
             {
-                if (value < 5)
-                {
-                    level = value;
-                    UpdateProperties();
-                }
+                Level++;
+                UpdateProperties();
             }
         }
         private void UpdateProperties()
         {
-            MaxHP = (int)(MaxHP * 1.15);
+            MaxHP = (int)(MaxHP * 1.3);
             CurrentHP = MaxHP;
-            AttackSpeed = (int)(AttackSpeed * 1.3);
-            Damage = (int)(Damage * 1.2);
-            PhysicalResistance = (int)(PhysicalResistance * 1.25);
-            RangeResistance = (int)(RangeResistance * 1.25);
-        }
-        public Warrior() : base(1, "Warrior", 25, 25, 1, Enumerable.Damage.Physical, 8, 5, 3)
-        {
+            AttackSpeed = AttackSpeed * 1.15;
+            Damage = (int)(Damage * 1.3);
+            PhysicalResistance = (int)(PhysicalResistance * 1.5);
+            RangeResistance = (int)(RangeResistance * 1.5);
         }
     }
 }

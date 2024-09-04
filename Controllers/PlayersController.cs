@@ -22,7 +22,7 @@ namespace PlemionaApplication.Controllers
         // GET: Players
         public async Task<IActionResult> Index()
         {
-            var plemionaApplicationContext = _context.Players.Include(p => p.Fraction);
+            var plemionaApplicationContext = _context.Players.Include(p => p.Fraction).Include(p => p.User);
             return View(await plemionaApplicationContext.ToListAsync());
         }
 
@@ -36,6 +36,7 @@ namespace PlemionaApplication.Controllers
 
             var player = await _context.Players
                 .Include(p => p.Fraction)
+                .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (player == null)
             {
@@ -48,7 +49,8 @@ namespace PlemionaApplication.Controllers
         // GET: Players/Create
         public IActionResult Create()
         {
-            ViewData["FractionId"] = new SelectList(_context.Fractions, "Id", "Id");
+            ViewData["FractionId"] = new SelectList(_context.Fractions, "Id", "Name");
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id");
             return View();
         }
 
@@ -57,15 +59,16 @@ namespace PlemionaApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Level,CurrentExperience,FractionId")] Player player)
+        public async Task<IActionResult> Create([Bind("Id,Name,Level,CurrentExperience,FractionId,UserId")] Player player)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 _context.Add(player);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FractionId"] = new SelectList(_context.Fractions, "Id", "Id", player.FractionId);
+            ViewData["FractionId"] = new SelectList(_context.Fractions, "Id", "Name", player.FractionId);
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", player.UserId);
             return View(player);
         }
 
@@ -82,7 +85,8 @@ namespace PlemionaApplication.Controllers
             {
                 return NotFound();
             }
-            ViewData["FractionId"] = new SelectList(_context.Fractions, "Id", "Id", player.FractionId);
+            ViewData["FractionId"] = new SelectList(_context.Fractions, "Id", "Name", player.FractionId);
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", player.UserId);
             return View(player);
         }
 
@@ -91,14 +95,14 @@ namespace PlemionaApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Level,CurrentExperience,FractionId")] Player player)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Level,CurrentExperience,FractionId,UserId")] Player player)
         {
             if (id != player.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 try
                 {
@@ -118,7 +122,8 @@ namespace PlemionaApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FractionId"] = new SelectList(_context.Fractions, "Id", "Id", player.FractionId);
+            ViewData["FractionId"] = new SelectList(_context.Fractions, "Id", "Name", player.FractionId);
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", player.UserId);
             return View(player);
         }
 
@@ -132,6 +137,7 @@ namespace PlemionaApplication.Controllers
 
             var player = await _context.Players
                 .Include(p => p.Fraction)
+                .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (player == null)
             {

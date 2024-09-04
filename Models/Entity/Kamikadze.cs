@@ -8,30 +8,22 @@ namespace MiniProjekt
 {
     public class Kamikadze: Entity
     {
-        private int level = 1;
-        public override int Level
+        public void UpgradeLevel()
         {
-            get => level;
-            set
+            if (Level < 5) // Upewnij się, że maksymalny poziom to 5
             {
-                if (value < 5)
-                {
-                    level = value;
-                    UpdateProperties();
-                }
+                Level++;
+                UpdateProperties();
             }
         }
         private void UpdateProperties()
         {
             MaxHP = (int)(MaxHP * 1.15);
             CurrentHP = MaxHP;
-            AttackSpeed = (int)(AttackSpeed * 1.3);
-            Damage = (int)(Damage * 1.2);
+            AttackSpeed = AttackSpeed * 1.2;
+            Damage = (int)(Damage * 1.3);
             PhysicalResistance = (int)(PhysicalResistance * 1.25);
             RangeResistance = (int)(RangeResistance * 1.25);
-        }
-        public Kamikadze() : base(1, "Kamikadze", 10, 10, 0.5, Enumerable.Damage.Destruction, 50, 2, 8)
-        {
         }
     }
 }

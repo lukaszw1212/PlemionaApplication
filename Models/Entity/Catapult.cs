@@ -5,34 +5,26 @@ using System.Text;
 using System.Threading.Tasks;
 using MiniProjekt;
 
-namespace PlemionaApplication.Models.Building
+namespace MiniProjekt
 {
     public class Catapult : Entity
     {
-        private int level = 1;
-        public override int Level
+        public void UpgradeLevel()
         {
-            get => level;
-            set
+            if (Level < 5) // Upewnij się, że maksymalny poziom to 5
             {
-                if (value < 5)
-                {
-                    level = value;
-                    UpdateProperties();
-                }
+                Level++;
+                UpdateProperties();
             }
         }
         private void UpdateProperties()
         {
             MaxHP = (int)(MaxHP * 1.15);
             CurrentHP = MaxHP;
-            AttackSpeed = (int)(AttackSpeed * 1.3);
+            AttackSpeed = Math.Round(AttackSpeed * 1.2,2);
             Damage = (int)(Damage * 1.2);
             PhysicalResistance = (int)(PhysicalResistance * 1.25);
             RangeResistance = (int)(RangeResistance * 1.25);
-        }
-        public Catapult() : base(1, "Catapult", 20, 20, 0.2, MiniProjekt.Enumerable.Damage.Range, 30, 1, 8)
-        {
         }
     }
 }

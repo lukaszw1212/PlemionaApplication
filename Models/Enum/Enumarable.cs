@@ -20,4 +20,5 @@ namespace MiniProjekt.Enumerable
         Iron,
         Wood
     }
+
 }

@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MiniProjekt;
 using PlemionaApplication.Models;
-using PlemionaApplication.Models.Building;
 
 
 namespace PlemionaApplication.Data
@@ -57,6 +56,30 @@ namespace PlemionaApplication.Data
                .WithOne(e => e.UserRole)
                .HasForeignKey(e => e.RoleId)
                .IsRequired();
+            // inne konfiguracje
+            modelBuilder.Entity<Archer>()
+        .Property(a => a.Level)
+        .HasDefaultValue(1);
+
+            modelBuilder.Entity<Hussar>()
+                .Property(h => h.Level)
+                .HasDefaultValue(1);
+
+            modelBuilder.Entity<Kamikadze>()
+                .Property(k => k.Level)
+                .HasDefaultValue(1);
+
+            modelBuilder.Entity<Catapult>()
+                .Property(c => c.Level)
+                .HasDefaultValue(1);
+
+            modelBuilder.Entity<Trojan>()
+                .Property(t => t.Level)
+                .HasDefaultValue(1);
+
+            modelBuilder.Entity<Warrior>()
+                .Property(w => w.Level)
+                .HasDefaultValue(1);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
