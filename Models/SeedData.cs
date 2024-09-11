@@ -561,7 +561,7 @@ namespace PlemionaApplication.Models
                         {
                         new MiniProjekt.Resource("Gold", 400)
                         { ExpeditionId = upiornaPolana.Id },
-                        new MiniProjekt.Resource("Grain", 500)
+                        new MiniProjekt.Resource("Wheat", 500)
                         { ExpeditionId = upiornaPolana.Id }
                         };
 
