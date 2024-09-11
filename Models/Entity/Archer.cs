@@ -26,8 +26,8 @@ namespace MiniProjekt
             CurrentHP = MaxHP;
             AttackSpeed = Math.Round(AttackSpeed * 1.15,2);
             Damage = (int)(Damage * 1.3);
-            PhysicalResistance = (int)(PhysicalResistance * 1.5);
-            RangeResistance = (int)(RangeResistance * 1.5);
+            PhysicalResistance = (PhysicalResistance * 1.25);
+            RangeResistance = (RangeResistance * 1.25);
         }
 
     }

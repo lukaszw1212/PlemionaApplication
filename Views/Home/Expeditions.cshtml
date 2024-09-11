@@ -1,7 +1,571 @@
-﻿@{
-    ViewData["Title"] = "Ekspedycje";
+﻿@model IEnumerable<MiniProjekt.Expedition>
+
+@{
+    ViewData["Title"] = "Dostępne Ekspedycje";
+    int goldAmount = ViewBag.GoldAmount ?? 0;
+    int woodAmount = ViewBag.WoodAmount ?? 0;
+    int wheatAmount = ViewBag.WheatAmount ?? 0;
+    int stoneAmount = ViewBag.StoneAmount ?? 0;
+    int ironAmount = ViewBag.IronAmount ?? 0;
 }
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"] - Plemiona</title>
+</head>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
 
-<h2>@ViewData["Title"]</h2>
-<p>Tutaj będą informacje o Twoich ekspedycjach.</p>
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
 
+        .header {
+            background-color: sandybrown;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 24px;
+        }
+
+        .player-bar {
+            background-color: sandybrown;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 24px;
+        }
+
+        .player {
+            display: flex;
+            align-items: center;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+        }
+
+        .info {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+            .tab:hover {
+                background-color: #ddd;
+            }
+
+        .resource-bar {
+            background-color: brown;
+            color: gold;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .resource {
+            display: flex;
+            align-items: center;
+        }
+
+            .resource img {
+                width: 30px;
+                height: 30px;
+                margin-right: 10px;
+            }
+
+            .resource span {
+                font-size: 18px;
+            }
+
+            .modal-success {
+                background-color: #d4edda; /* Zielony */
+                color: #155724; /* Tekst zielony */
+            }
+
+            .modal-failure {
+                background-color: #f8d7da; /* Czerwony */
+                color: #721c24; /* Tekst czerwony */
+            }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function collectGold() {
+            $.post('/Home/CollectGold', function (data) {
+                $('#goldAmount').html(data);
+            });
+        }
+        function collectWood() {
+            $.post('/Home/CollectWood', function (data) {
+                $('#woodAmount').html(data);
+            });
+        }
+        function collectStone() {
+            $.post('/Home/CollectStone', function (data) {
+                $('#stoneAmount').html(data);
+            });
+        }
+        function collectIron() {
+            $.post('/Home/CollectIron', function (data) {
+                $('#ironAmount').html(data);
+            });
+        }
+        function collectWheat() {
+            $.post('/Home/CollectWheat', function (data) {
+                $('#wheatAmount').html(data);
+            });
+        }
+
+        $(document).ready(function () {
+            setInterval(collectGold, 250 * @ViewBag.TownHallSpeed); //zbieranie złota
+            setInterval(collectWood, 250 * @ViewBag.SawmillSpeed); //zbieranie drewna
+            setInterval(collectStone, 250 * @ViewBag.StoneMineSpeed); //zbieranie kamienia
+            setInterval(collectIron, 250 * @ViewBag.IronMineSpeed); //zbieranie zelaza
+            setInterval(collectWheat, 250 * @ViewBag.GrainFarmSpeed); //zbieranie zboza
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            // Pobierz wszystkie ekspedycje i wywołaj getExpeditionUnits dla każdej z nich
+            @foreach (var expedition in Model)
+            {
+                <text>
+                        getExpeditionUnits(@expedition.Id);
+                </text>
+            }
+        });
+
+        // funkcje do ekspedycji
+        function getExpeditionUnits(expeditionId) {     
+            fetch(`/Expeditions/GetExpeditionUnits/${expeditionId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Błąd w pobieraniu danych: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                displayExpeditionUnits(data,expeditionId);
+            })
+            .catch(error => {
+                console.error('Wystąpił problem:', error);
+            });
+        }
+        function displayExpeditionUnits(data,expeditionId) {
+        const list = document.getElementById("ExpeditionUnits-"+expeditionId);
+        list.innerHTML = `
+                    <li><img src=/images/archer.png>Łucznicy: ${data.archerAmount || 0}</li>
+                    <li><img src=/images/warrior.png>Wojownicy: ${data.warriorAmount || 0}</li>
+                    <li><img src=/images/catapult.png>Katapulty: ${data.catapultAmount || 0}</li>
+                    <li><img src=/images/hussar.png>Husarze: ${data.hussarAmount || 0}</li>
+                    <li><img src=/images/kamikaze.png>Kamikadze: ${data.kamikadzeAmount || 0}</li>
+                    <li><img src=/images/trojan.png>Trojany: ${data.trojanAmount || 0}</li>
+            `;
+        }
+
+    function prepareUnitForm(expeditionId) {
+        document.getElementById("data-expedition-id").value = expeditionId;
+        const expeditionElement = document.querySelector(`#expedition-${expeditionId}`);
+        const cooldown = expeditionElement.getAttribute('data-cooldown');
+
+        // Ustaw wartość cooldownu w ukrytym polu formularza
+        document.getElementById('expeditionCooldown').value = cooldown / (@ViewBag.StajniaLevel+1);
+    }
+    // licznik
+    function startCountdown(event, button) {
+        let seconds = document.getElementById('expeditionCooldown').value;
+        if (isNaN(seconds) || seconds <= 0) {
+            console.error(seconds);
+            return;
+        }
+        // Zatrzymuje domyślne przejście do linku
+        event.preventDefault();
+        // Zbieranie danych z formularza
+        const form = document.getElementById('unitForm');
+        const formData = new FormData(form);
+
+        const archerAmount = formData.get('archerAmount');
+        const warriorAmount = formData.get('warriorAmount');
+        const hussarAmount = formData.get('hussarAmount');
+        const kamikadzeAmount = formData.get('kamikadzeAmount');
+        const trojanAmount = formData.get('trojanAmount');
+        const expeditionId = formData.get('data-expedition-id');
+        // Dezaktywacja przycisku
+        button.disabled = true;
+
+        // Znajdź pasek postępu i pokaż go
+        const progressBarContainer = document.getElementById('countdownProgress-' + expeditionId);
+        const progressBar = progressBarContainer.querySelector('.progress-bar');
+        progressBarContainer.style.display = 'block';
+
+        // Ustawienie początkowej szerokości paska na 100%
+        let currentWidth = 100;
+        progressBar.style.width = currentWidth + '%';
+        // Ustawienie licznika
+        let countdown = setInterval(() => {
+            seconds--;
+            currentWidth = (seconds / 60) * 100; // Przeliczenie szerokości paska
+            progressBar.style.width = currentWidth + '%'; // Aktualizacja szerokości paska
+            progressBar.setAttribute('aria-valuenow', currentWidth);
+            document.getElementById("timeCountdown-"+expeditionId).innerText = "Czas do walki: " + seconds + "s";
+            // Gdy czas się skończy, odblokuj przycisk
+            if (seconds <= 0) {
+                clearInterval(countdown);
+                button.disabled = false;
+                progressBarContainer.style.display = 'none'; // Ukryj pasek po zakończeniu
+                fetch('/Expeditions/Fight', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        archerAmount,
+                        warriorAmount,
+                        hussarAmount,
+                        kamikadzeAmount,
+                        trojanAmount,
+                        expeditionId
+                    })
+                })
+                    .then(response => response.json()) // Parsowanie odpowiedzi jako JSON
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                            return;
+                        }
+                        console.log('Dane otrzymane:', data);
+                        displayExpeditionResult(data); // Wywołanie funkcji z danymi
+                    })
+                    .catch(error => {
+                        console.error('Wystąpił problem:', error);
+                    });
+            }
+        }, 1000);
+    }
+        function displayExpeditionResult(result) {
+        const modalContent = document.querySelector('#battleResultModal .modal-content');
+        console.log('Dane w funkcji displayExpeditionResult:', result); // Dodaj to, aby zobaczyć, co jest przekazywane
+            if (result.playerWin == true) {
+                document.getElementById('battleResultWin').textContent = 'Wygrana';
+                modalContent.classList.add('modal-success');
+                modalContent.classList.remove('modal-failure');
+            }
+            else
+            {
+                document.getElementById('battleResultWin').textContent = 'Przegrana';
+                modalContent.classList.add('modal-failure');
+                modalContent.classList.remove('modal-success');
+            }
+        document.getElementById('playerRemainingHealth').textContent = result.playerRemainingHealth !== undefined ? result.playerRemainingHealth : 'Brak danych';
+
+        // Wyświetlanie pozostałego zdrowia przeciwnika
+        document.getElementById('enemyRemainingHealth').textContent = result.enemyRemainingHealth !== undefined ? result.enemyRemainingHealth : 'Brak danych';
+
+        // Wyświetlanie zdobytych zasobów
+        document.getElementById('goldGained').textContent = result.goldGained !== undefined ? result.goldGained : 'Brak danych';
+        document.getElementById('experienceGained').textContent = result.experienceGained !== undefined ? result.experienceGained : 'Brak danych';
+        document.getElementById('ironGained').textContent = result.ironGained !== undefined ? result.ironGained : 'Brak danych';
+        document.getElementById('stoneGained').textContent = result.stoneGained !== undefined ? result.stoneGained : 'Brak danych';
+        document.getElementById('woodGained').textContent = result.woodGained !== undefined ? result.woodGained : 'Brak danych';
+        document.getElementById('wheatGained').textContent = result.wheatGained !== undefined ? result.wheatGained : 'Brak danych';
+
+        // Wywołanie modala
+        var myModal = new bootstrap.Modal(document.getElementById('battleResultModal'));
+        myModal.show();
+
+
+        }
+    </script>
+<body>
+    @if (User.Identity.IsAuthenticated)
+    {
+            var requiredExp = @ViewBag.PlayerLevel * 20;
+            var dividedExp = @Math.Round(Decimal.Divide(@ViewBag.PlayerExp, requiredExp), 2);
+            decimal percentExp = dividedExp * 100;
+            var percent = ((int)percentExp) + "%";
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-auto bg-light sticky-top">
+                        <div class="d-flex flex-sm-column flex-row flex-nowrap bg-light align-items-center sticky-top">
+                            <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
+                                <li class="nav-item">
+                                    <span class="ms-1 d-none d-sm-inline">
+                                        @ViewBag.VillageName
+                                    </span>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="ms-1 d-none d-sm-inline">
+                                        Level: @ViewBag.PlayerLevel
+                                    </span>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="ms-1 d-none d-sm-inline">
+                                        Exp:
+                                    </span>
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: @percent" aria-valuenow="@percentExp" aria-valuemin="0" aria-valuemax="@requiredExp">@percent</div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <img src="/images/archer.png" width="25px" height="25px" />
+                                    <span class="ms-1 d-none d-sm-inline">
+                                        Łucznicy: @ViewBag.ArcherAmount
+                                    </span>
+                                </li>
+                                <li>
+                                    <img src="/images/catapult.png" width="25px" height="25px" />
+                                    <span class="ms-1 d-none d-sm-inline">
+                                        Katapulty: @ViewBag.CatapultAmount
+                                    </span>
+                                </li>
+                                <li>
+                                    <img src="/images/hussar.png" width="25px" height="25px" />
+                                    <span class="ms-1 d-none d-sm-inline">
+                                        Husarzy: @ViewBag.HussarAmount
+                                    </span>
+                                </li>
+                                <li>
+                                    <img src="/images/kamikaze.png" width="25px" height="25px" />
+                                    <span class="ms-1 d-none d-sm-inline">
+                                        Kamikadze: @ViewBag.KamikadzeAmount
+                                    </span>
+                                </li>
+                                <li>
+                                    <img src="/images/trojan.png" width="25px" height="25px" />
+                                    <span class="ms-1 d-none d-sm-inline">
+                                        Trojan: @ViewBag.TrojanAmount
+                                    </span>
+                                </li>
+                                <li>
+                                    <img src="/images/warrior.png" width="25px" height="25px" />
+                                    <span class="ms-1 d-none d-sm-inline">
+                                        Wojownicy: @ViewBag.WarriorAmount
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm p-3 min-vh-100">
+                        <div class="container">
+                            <div class="player-bar">
+                                <div class="player">
+                                    @ViewBag.VillageName
+                                </div>
+                                <div class="player">
+                                    Level: @ViewBag.PlayerLevel
+                                    Exp: @ViewBag.PlayerExp / @requiredExp
+                                </div>
+                            </div>
+
+                            <div class="resource-bar">
+                                <div class="resource">
+                                    <img src="/images/gold.png" alt="Gold" />
+                                    <span id="goldAmount">
+                                        @{
+                                                                            @Html.Partial("_GoldAmountPartial", goldAmount)
+                                        }
+                                    </span>
+                                </div>
+                                <div class="resource">
+                                    <img src="/images/iron.png" alt="Iron" />
+                                    <span id="ironAmount">
+                                        @{
+                                                                            @Html.Partial("_IronAmountPartial", ironAmount)
+                                        }
+                                    </span>
+                                </div>
+                                <div class="resource">
+                                    <img src="/images/stone.png" alt="Stone" />
+                                    <span id="stoneAmount">
+                                        @{
+                                                                            @Html.Partial("_StoneAmountPartial", stoneAmount)
+                                        }
+                                    </span>
+                                </div>
+                                <div class="resource">
+                                    <img src="/images/wheat.png" alt="Wheat" />
+                                    <span id="wheatAmount">
+                                        @{
+                                                                            @Html.Partial("_WheatAmountPartial", wheatAmount)
+                                        }
+                                    </span>
+                                </div>
+                                <div class="resource">
+                                    <img src="/images/wood.png" alt="Wood" />
+                                    <span id="woodAmount">
+                                        @{
+                                                                            @Html.Partial("_WoodAmountPartial", woodAmount)
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="content">
+                                <div class="container mt-4">
+                                    <h2>@ViewData["Title"]</h2>
+                                    <p>Wybierz ekspedycję, na którą chcesz wyruszyć:</p>
+
+                                    @if (!Model.Any())
+                                    {
+                                        <div class="alert alert-info">Brak dostępnych ekspedycji.</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="row">
+                                            @foreach (var expedition in Model)
+                                            {
+                                                var isAvailable = expedition.Level <= @ViewBag.PlayerLevel; // Sprawdzenie dostępności na podstawie poziomu gracza
+
+                                                <div class="col-md-4 mb-3">
+                                                <div class="card border-success mb-3@(!isAvailable ? "bg-light text-muted" : "")" id="expedition-@expedition.Id" data-cooldown="@expedition.Cooldown">
+                                                        <img src="/images/@expedition.Image" class="card-img-top" alt="Zdjęcie ekspedycji" style="max-height: 200px; object-fit: cover;">
+                                                        <div class="card-body text-success">
+                                                            <h5 class="card-title">@expedition.Name</h5>
+                                                            <p class="card-text">
+                                                                Poziom: @expedition.Level <br />
+                                                                Zdobywane doświadczenie: @expedition.ExperienceGained <br />
+                                                                Jednostki przeciwnika:
+                                                                <ul id="ExpeditionUnits-@expedition.Id">
+                                                                </ul>
+                                                            </p>
+
+                                                            @if (isAvailable)
+                                                            {
+                                                            <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#unitFormModal" onclick="prepareUnitForm(@expedition.Id)">
+                                                                    Wyrusz na ekspedycję
+                                                                </a>
+                                                            <div class="progress mt-2" style="height: 20px; display: none;" id="countdownProgress-@expedition.Id">
+                                                                <div class="progress-bar progress-bar-striped bg-success"
+                                                                     role="progressbar"
+                                                                     style="width: 100%;"
+                                                                     aria-valuenow="@expedition.Cooldown"
+                                                                     aria-valuemin="0"
+                                                                     aria-valuemax="@expedition.Cooldown">
+                                                                    <span id="timeCountdown-@expedition.Id"> Czas do walki: @expedition.Cooldown s</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="expeditionCooldown" class="form-label">Czas odnowienia</label>
+                                                                <input type="hidden" id="expeditionCooldown" name="expeditionCooldown" />
+                                                            </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button class="btn btn-secondary" disabled>Ekspedycja niedostępna</button>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    }
+        else
+        {
+            <h2>Musisz być zalogowany, aby zobaczyć tę stronę.</h2>
+            <p><a href="@Url.Action("Login", "Home")">Zaloguj się</a></p>
+        }
+    <div class="modal fade" id="unitFormModal" tabindex="-1" aria-labelledby="unitFormModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="unitFormModalLabel">Wybierz jednostki do walki</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="unitForm">
+                        <div class="mb-3">
+                            <label for="archerAmount" class="form-label">Łucznicy</label>
+                            <input type="number" class="form-control" id="archerAmount" name="archerAmount" value="0" min="0" max=@ViewBag.ArcherAmount placeholder="Ilość łuczników">
+                        </div>
+                        <div class="mb-3">
+                            <label for="warriorAmount" class="form-label">Wojownicy</label>
+                            <input type="number" class="form-control" id="warriorAmount" name="warriorAmount" value="0" min="0" max=@ViewBag.WarriorAmount placeholder="Ilość wojowników">
+                        </div>
+                        <div class="mb-3">
+                            <label for="warriorAmount" class="form-label">Katapulty</label>
+                            <input type="number" class="form-control" id="catapultAmount" name="catapultAmount" value="0" min="0" max=@ViewBag.CatapultAmount placeholder="Ilość katapult">
+                        </div>
+                        <div class="mb-3">
+                            <label for="warriorAmount" class="form-label">Husarzy</label>
+                            <input type="number" class="form-control" id="hussarAmount" name="hussarAmount" value="0" min="0" max=@ViewBag.HussarAmount placeholder="Ilość husarii">
+                        </div>
+                        <div class="mb-3">
+                            <label for="kamikadzeAmount" class="form-label">Kamikadze</label>
+                            <input type="number" class="form-control" id="kamikadzeAmount" name="kamikadzeAmount" value="0" min="0" max=@ViewBag.KamikadzeAmount placeholder="Ilość kamikadze">
+                        </div>
+                        <div class="mb-3">
+                            <label for="trojanAmount" class="form-label">Trojani</label>
+                            <input type="number" class="form-control" id="trojanAmount" name="trojanAmount" value="0" min="0" max=@ViewBag.TrojanAmount placeholder="Ilość trojanów">
+                            <input type="hidden" id="data-expedition-id" name="data-expedition-id"/>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="startCountdown(event, this)">
+                            Wyślij i rozpocznij odliczanie
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="battleResultModal" tabindex="-1" aria-labelledby="battleResultModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="battleResultModalLabel">Wynik Walki</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Wynik Walki:</strong> <span id="battleResultWin"></span></p>
+                    <p><strong>Pozostałe zdrowie gracza:</strong> <span id="playerRemainingHealth"></span></p>
+                    <p><strong>Pozostałe zdrowie przeciwnika:</strong> <span id="enemyRemainingHealth"></span></p>
+                    <p><strong>Zdobyte złoto:</strong> <span id="goldGained"></span></p>
+                    <p><strong>Zdobyte doświadczenie:</strong> <span id="experienceGained"></span></p>
+                    <p><strong>Zdobyte żelazo:</strong> <span id="ironGained"></span></p>
+                    <p><strong>Zdobyty kamień:</strong> <span id="stoneGained"></span></p>
+                    <p><strong>Zdobyte drewno:</strong> <span id="woodGained"></span></p>
+                    <p><strong>Zdobyte zboże:</strong> <span id="wheatGained"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+</html>

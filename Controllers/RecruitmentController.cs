@@ -74,7 +74,7 @@ namespace PlemionaApplication.Controllers
                             AttackSpeed = 2,
                             DamageType = Damage.Physical,
                             Damage = 20,
-                            PhysicalResistance = 6,
+                            PhysicalResistance = 2.25,
                             RangeResistance = 1,
                             Level = 1,
                         };
@@ -91,8 +91,8 @@ namespace PlemionaApplication.Controllers
                             AttackSpeed = 0.5,
                             DamageType = Damage.Destruction,
                             Damage = 50,
-                            PhysicalResistance = 2,
-                            RangeResistance = 8,
+                            PhysicalResistance = 0.6,
+                            RangeResistance = 0.5,
                             Level = 1,
                         };
                         _context.Add(kamikadze);
@@ -110,7 +110,7 @@ namespace PlemionaApplication.Controllers
                             DamageType = Damage.Range,
                             Damage = 30,
                             PhysicalResistance = 1,
-                            RangeResistance = 8,
+                            RangeResistance = 1.5,
 
                         };
                         _context.Add(catapult);
@@ -127,8 +127,8 @@ namespace PlemionaApplication.Controllers
                             AttackSpeed = 1,
                             DamageType = Damage.Physical,
                             Damage = 0,
-                            PhysicalResistance = 15,
-                            RangeResistance = 15,
+                            PhysicalResistance = 3.25,
+                            RangeResistance = 3.25,
                         };
                         _context.Add(trojan);
                     }
@@ -143,8 +143,8 @@ namespace PlemionaApplication.Controllers
                             AttackSpeed = 1,
                             DamageType = Damage.Physical,
                             Damage = 8,
-                            PhysicalResistance = 5,
-                            RangeResistance = 3,
+                            PhysicalResistance = 1.25,
+                            RangeResistance = 1.05,
                             Level = 1,
                         };
                         _context.Add(warrior);

@@ -16,10 +16,14 @@ namespace MiniProjekt
         public string Name { get; set; }
         public ResourceType Type { get; set; }
         public int Amount {  get; set; }
-        public int PlayerId { get; set; }
+        public int? PlayerId { get; set; }
 
         [ForeignKey("PlayerId")]
-        public Player Player { get; set; }
+        public Player? Player { get; set; }
+        public int? ExpeditionId { get; set; }
+        [ForeignKey("ExpeditionId")]
+        public Expedition? Expedition
+        { get; set; }
         public Resource(string name, int amount)
         {
             Name = name;

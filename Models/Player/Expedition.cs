@@ -12,6 +12,8 @@ namespace MiniProjekt
         [Required]
         public int Level { get; set; }
         public int ExperienceGained { get; set; }
+        public int Cooldown {  get; set; }
+        public string? Image {  get; set; }
         public DefensiveWalls? DefensiveWalls { get; set;}
         public List<Entity>? Entities { get; set; }
         public List<Resource>? Resources { get; set; }

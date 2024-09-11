@@ -28,7 +28,7 @@ namespace MiniProjekt
 
         private void UpdateProperties()
         {
-            MaxHorses = 2 + (Level - 1) * 2;
+            MaxHorses++;
         }
 
     }

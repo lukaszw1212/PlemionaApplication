@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlemionaApplication.Data;
 
@@ -11,13 +12,15 @@ using PlemionaApplication.Data;
 namespace PlemionaApplication.Migrations
 {
     [DbContext(typeof(PlemionaApplicationContext))]
-    partial class PlemionaApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20240905124814_ExpeditionUpdate")]
+    partial class ExpeditionUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -175,11 +178,11 @@ namespace PlemionaApplication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("PhysicalResistance")
-                        .HasColumnType("float");
+                    b.Property<int>("PhysicalResistance")
+                        .HasColumnType("int");
 
-                    b.Property<double>("RangeResistance")
-                        .HasColumnType("float");
+                    b.Property<int>("RangeResistance")
+                        .HasColumnType("int");
 
                     b.Property<int?>("VillageId")
                         .HasColumnType("int");
@@ -192,7 +195,7 @@ namespace PlemionaApplication.Migrations
 
                     b.ToTable("Entity");
 
-                    b.HasDiscriminator().HasValue("Entity");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Entity");
 
                     b.UseTphMappingStrategy();
                 });
@@ -210,9 +213,6 @@ namespace PlemionaApplication.Migrations
 
                     b.Property<int>("ExperienceGained")
                         .HasColumnType("int");
-
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Level")
                         .HasColumnType("int");

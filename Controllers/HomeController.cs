@@ -499,7 +499,97 @@ namespace PlemionaApplication.Controllers
 
         public IActionResult Expeditions()
         {
-            return View();
+            string userName = User.Identity.Name;
+            var user = _context.User.FirstOrDefault(u => u.UserName == userName);
+
+            if (user == null)
+            {
+                throw new Exception("Nie znaleziono u¿ytkownika o podanej nazwie.");
+            }
+
+            // Pobierz gracza na podstawie Id u¿ytkownika
+            var player = _context.Players.FirstOrDefault(p => p.UserId == user.Id);
+
+            if (player == null)
+            {
+                throw new Exception("Nie znaleziono gracza powi¹zanego z u¿ytkownikiem.");
+            }
+            var playerLevel = player.Level;
+            var village = _context.Villages.FirstOrDefault(v => v.Id == player.Id);
+            ViewBag.VillageName = village.Name;
+            var gold = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Gold);
+            var wood = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Wood);
+            var stone = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Stone);
+            var iron = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Iron);
+            var wheat = _context.Resources.FirstOrDefault(r => r.PlayerId == player.Id && r.Type == MiniProjekt.Enumerable.ResourceType.Wheat);
+            ViewBag.GoldAmount = gold.Amount;
+            ViewBag.WoodAmount = wood.Amount;
+            ViewBag.StoneAmount = stone.Amount;
+            ViewBag.IronAmount = iron.Amount;
+            ViewBag.WheatAmount = wheat.Amount;
+            //predkosci generowania i ustawienie informacji o levelu
+            var townHall = _context.TownHall.FirstOrDefault(t => t.VillageId == village.Id);
+            ViewBag.TownHallSpeed = townHall.Time;
+            ViewBag.RatuszLevel = townHall.Level;
+            var sawmill = _context.Sawmill.FirstOrDefault(t => t.VillageId == village.Id);
+            if (sawmill != null)
+            {
+                ViewBag.SawmillSpeed = sawmill.Time;
+                ViewBag.TartakLevel = sawmill.Level;
+            }
+            else
+            {
+                ViewBag.SawmillSpeed = 30;
+                ViewBag.TartakLevel = 0;
+            }
+            var ironmine = _context.IronMine.FirstOrDefault(t => t.VillageId == village.Id);
+            if (ironmine != null)
+            {
+                ViewBag.IronMineSpeed = ironmine.Time;
+                ViewBag.ZelazoLevel = ironmine.Level;
+            }
+            else
+            {
+                ViewBag.IronMineSpeed = 55;
+                ViewBag.ZelazoLevel = 0;
+            }
+            var stonemine = _context.StoneMine.FirstOrDefault(t => t.VillageId == village.Id);
+            if (stonemine != null)
+            {
+                ViewBag.StoneMineSpeed = stonemine.Time;
+                ViewBag.KamienLevel = stonemine.Level;
+            }
+            else
+            {
+                ViewBag.StoneMineSpeed = 35;
+                ViewBag.KamienLevel = 0;
+            }
+            var grainfarm = _context.GrainFarm.FirstOrDefault(t => t.VillageId == village.Id);
+            if (grainfarm != null)
+            {
+                ViewBag.FarmaLevel = grainfarm.Level;
+                ViewBag.GrainFarmSpeed = grainfarm.Time;
+            }
+            else
+            {
+                ViewBag.FarmaLevel = 0;
+                ViewBag.GrainFarmSpeed = 40;
+            }
+            var horsestable = _context.HorseStable.FirstOrDefault(t => t.Village.Id == village.Id);
+            if (horsestable != null)
+                ViewBag.StajniaLevel = horsestable.Level;
+            else
+                ViewBag.StajniaLevel = 0;
+            ViewBag.ArcherAmount = _context.Archer.Count(a => a.VillageId == village.Id);
+            ViewBag.CatapultAmount = _context.Catapult.Count(a => a.VillageId == village.Id);
+            ViewBag.HussarAmount = _context.Hussar.Count(a => a.VillageId == village.Id);
+            ViewBag.KamikadzeAmount = _context.Kamikadze.Count(a => a.VillageId == village.Id);
+            ViewBag.TrojanAmount = _context.Trojan.Count(a => a.VillageId == village.Id);
+            ViewBag.WarriorAmount = _context.Warrior.Count(a => a.VillageId == village.Id);
+            var expeditions = _context.Expedition.ToList();
+            ViewBag.PlayerLevel = playerLevel;
+            ViewBag.PlayerExp = player.CurrentExperience;
+            return View(expeditions);
         }
 
         public async Task<IActionResult> MyTribe()
