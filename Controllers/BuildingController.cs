@@ -492,6 +492,7 @@ namespace PlemionaApplication.Controllers
                 Level = 1,
                 CurrentHorses = 0,
                 MaxHorses = 2,
+                MaxBuildingLevel = 5,
                 VillageId = village.Id
             };
             _context.Add(stajnia);
