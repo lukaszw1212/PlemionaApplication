@@ -61,6 +61,7 @@ namespace PlemionaApplication.Controllers
             int hussarAmount = int.TryParse(data.GetProperty("hussarAmount").GetString() ?? "0", out var hus) ? hus : 0;
             int kamikadzeAmount = int.TryParse(data.GetProperty("kamikadzeAmount").GetString() ?? "0", out var kam) ? kam : 0;
             int trojanAmount = int.TryParse(data.GetProperty("trojanAmount").GetString() ?? "0", out var tro) ? tro : 0;
+            int catapultAmount = int.TryParse(data.GetProperty("catapultAmount").GetString() ?? "0", out var cat) ? cat : 0;
             int expeditionId = Int32.Parse(data.GetProperty("expeditionId").GetString());
             var expedition = _context.Expedition.FirstOrDefault(e => e.Id == expeditionId);
             var archers = _context.Archer.Where(a => a.VillageId == village.Id).OrderBy(a => a.Level).Take(archerAmount).ToList();
@@ -68,20 +69,21 @@ namespace PlemionaApplication.Controllers
             var hussars = _context.Hussar.Where(h => h.VillageId == village.Id).OrderBy(a => a.Level).Take(hussarAmount).ToList();
             var kamikadzes = _context.Kamikadze.Where(k => k.VillageId == village.Id).OrderBy(a => a.Level).Take(kamikadzeAmount).ToList();
             var trojans = _context.Trojan.Where(t => t.VillageId == village.Id).OrderBy(a => a.Level).Take(trojanAmount).ToList();
-
+            var catapults = _context.Catapult.Where(c => c.VillageId == village.Id).OrderBy(c => c.Level).Take(catapultAmount).ToList();
             var playerUnitEntities = new List<Entity>();
             playerUnitEntities.AddRange(archers);
             playerUnitEntities.AddRange(warriors);
             playerUnitEntities.AddRange(hussars);
             playerUnitEntities.AddRange(kamikadzes);
             playerUnitEntities.AddRange(trojans);
+            playerUnitEntities.AddRange(catapults);
 
             var enemyArchers = _context.Archer.Where(e => e.ExpeditionId == expeditionId).ToList();
             var enemyWarriors = _context.Warrior.Where(e => e.ExpeditionId == expeditionId).ToList();
             var enemyHussars = _context.Hussar.Where(e => e.ExpeditionId == expeditionId).ToList();
             var enemyKamikadzes = _context.Kamikadze.Where(e => e.ExpeditionId == expeditionId).ToList();
             var enemyTrojans = _context.Trojan.Where(e => e.ExpeditionId == expeditionId).ToList();
-
+            var enemyCatapults = _context.Catapult.Where(e => e.ExpeditionId == expeditionId).ToList();
             // Dodaj jednostki przeciwnika do listy
             var enemyUnitEntities = new List<Entity>();
             enemyUnitEntities.AddRange(enemyArchers);
@@ -89,6 +91,7 @@ namespace PlemionaApplication.Controllers
             enemyUnitEntities.AddRange(enemyHussars);
             enemyUnitEntities.AddRange(enemyKamikadzes);
             enemyUnitEntities.AddRange(enemyTrojans);
+            enemyUnitEntities.AddRange(enemyCatapults);
             return Battle(enemyUnitEntities, playerUnitEntities, expeditionId);
         }
         private JsonResult Battle(List<Entity> enemyUnits, List<Entity> playerUnitEntities, int expeditionId)
@@ -116,16 +119,17 @@ namespace PlemionaApplication.Controllers
                     {
                         if (playerUnitEntities.Count == 0) break; // Przerwij jeśli nie ma więcej jednostek gracza
                         PerformAttack(unit, playerUnitEntities); // Atakuj jednostki gracza
+                        var defeatedPlayerUnits = playerUnitEntities.Where(unit => unit.CurrentHP <= 0).ToList();
+                        foreach (var defeatedUnit in defeatedPlayerUnits)
+                        {
+                            _context.Remove(defeatedUnit); // Usuń z bazy danych
+                        }
+                        _context.SaveChanges();
                         playerUnitEntities.RemoveAll(unit => unit.CurrentHP <= 0); // Usuń pokonane jednostki
                     }
                 }
             }
             // Usuń jednostki gracza z bazy danych
-            var defeatedPlayerUnits = playerUnitEntities.Where(unit => unit.CurrentHP <= 0).ToList();
-            foreach (var unit in defeatedPlayerUnits)
-            {
-                _context.Remove(unit); // Usuń z bazy danych
-            }
             _context.SaveChanges(); // Zapisz zmiany
             // Aktualizacja zdrowia po walce
             int playerHealth = playerUnitEntities.Sum(unit => unit.CurrentHP);
