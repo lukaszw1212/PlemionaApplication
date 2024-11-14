@@ -1,0 +1,36 @@
+﻿@model List<PlemionaApplication.Models.Other.PlayerRankingViewModel>
+
+@{
+    ViewData["Title"] = "Ranking Graczy";
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+}
+
+<h2>Ranking Graczy</h2>
+
+<div class="mb-3">
+    <button class="btn btn-success" onclick="location.href='@Url.Action("ExportToExcel")'">Eksportuj do Excel</button>
+    <button class="btn btn-danger" onclick="location.href='@Url.Action("ExportToPdf")'">Eksportuj do PDF</button>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Pozycja</th>
+            <th>Nazwa Gracza</th>
+            <th>Level</th>
+            <th>Doświadczenie</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <tr>
+                <td>@(i + 1)</td>
+                <td>@Model[i].Name</td>
+                <td>@Model[i].Level</td>
+                <td>@Model[i].CurrentExperience</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

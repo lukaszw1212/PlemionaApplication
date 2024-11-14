@@ -25,9 +25,18 @@
     <Compile Remove="Models\Stajnia.cs" />
     <Compile Remove="Models\Tartak.cs" />
     <Compile Remove="Models\Zbrojownia.cs" />
+    <Compile Remove="Views\Home\Market.cshtml.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Home\Market.cshtml" />
+    <Content Remove="Views\Home\SendSupport.cshtml" />
+    <Content Remove="Views\Home\Support.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="7.4.2" />
+    <PackageReference Include="iTextSharp.LGPLv2.Core" Version="3.4.22" />
     <PackageReference Include="Microsoft.AspNetCore.Datasync.InMemory" Version="6.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.6" />

@@ -10,6 +10,12 @@ using PlemionaApplication.Entities;
 using MiniProjekt;
 using System.Security.Permissions;
 using MiniProjekt.Enumerable;
+using PlemionaApplication.Models.Other;
+using OfficeOpenXml;
+using System.IO;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System.Drawing.Printing;
 namespace PlemionaApplication.Controllers
 {
     public class HomeController : Controller
@@ -648,44 +654,188 @@ namespace PlemionaApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> JoinFraction(int fractionId)
         {
-            // Get the current user's ID from session or cookie
+          
             var userId = Request.Cookies["UserId"];
             if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("Login", "Account"); // Handle if user is not logged in
+                return RedirectToAction("Login", "Account"); 
             }
 
-            // Find the user by ID
+          
             var user = await _context.User.FindAsync(int.Parse(userId));
             if (user == null)
             {
-                return RedirectToAction("Login", "Account"); // Handle if user not found
+                return RedirectToAction("Login", "Account"); 
             }
 
-            // Find the player associated with the user
+            
             var player = await _context.Players
-                .Include(p => p.Fraction) // Include fraction data
+                .Include(p => p.Fraction) 
                 .FirstOrDefaultAsync(p => p.UserId == user.Id);
 
             if (player == null)
             {
-                return RedirectToAction("Error"); // Handle if player not found
+                return RedirectToAction("Error"); 
             }
 
-            // Find the selected fraction
+          
             var fraction = await _context.Fractions.FindAsync(fractionId);
             if (fraction == null)
             {
-                return NotFound(); // Handle if fraction not found
+                return NotFound(); 
             }
 
-            // Update player's fraction
-            player.Fraction = fraction; // Assign selected fraction to player
-            player.FractionId = fraction.Id; // Assign fraction ID to player
+            player.Fraction = fraction;
+            player.FractionId = fraction.Id;
             _context.Players.Update(player);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Home"); // Redirect to home or appropriate page
+            return RedirectToAction("Index", "Home");
+        }
+
+        // GET: Home/Market2
+        public async Task<IActionResult> Market2()
+        {
+            return View();
+        }
+
+        //POST: Home/Market2
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Market2(string resourceType)
+        {
+            string userName = User.Identity.Name;
+            var user = _context.User.FirstOrDefault(u => u.UserName == userName);
+            var player = _context.Players.FirstOrDefault(u => u.UserId == user.Id);
+            var playerId = player.Id;
+            var village = _context.Villages.FirstOrDefault(v => v.Id == playerId);
+            var goldResource = _context.Resources.FirstOrDefault(r => r.PlayerId == playerId && r.Type == MiniProjekt.Enumerable.ResourceType.Gold);
+            var woodResource = _context.Resources.FirstOrDefault(r => r.PlayerId == playerId && r.Type == MiniProjekt.Enumerable.ResourceType.Wood);
+            var oreResource = _context.Resources.FirstOrDefault(r => r.PlayerId == playerId && r.Type == MiniProjekt.Enumerable.ResourceType.Iron);
+            var stoneResource = _context.Resources.FirstOrDefault(r => r.PlayerId == playerId && r.Type == MiniProjekt.Enumerable.ResourceType.Stone);
+            var wheatResource = _context.Resources.FirstOrDefault(r => r.PlayerId == playerId && r.Type == MiniProjekt.Enumerable.ResourceType.Wheat);
+            if (goldResource.Amount < 100)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            switch (resourceType)
+            {
+                case "Stone":
+                    stoneResource.Amount += 100;
+                    break;
+                case "Wood":
+                    woodResource.Amount += 100;
+                    break;
+                case "Ore":
+                    oreResource.Amount += 100;
+                    break;
+                case "Wheat":
+                    wheatResource.Amount += 100;
+                    break;
+                default:
+                    return RedirectToAction("Index", "Home");
+            }
+
+            goldResource.Amount -= 100;
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> PlayerRanks()
+        {
+            var players = await _context.Players
+                .OrderByDescending(p => p.Level)
+                .Select(p => new PlayerRankingViewModel
+                {
+                    Name = p.Name,
+                    Level = p.Level,
+                    CurrentExperience = p.CurrentExperience
+                })
+                .ToListAsync();
+
+            return View(players);
+        }
+
+        public async Task<IActionResult> ExportToExcel()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            var players = await _context.Players
+                .OrderByDescending(p => p.Level)
+                .Select(p => new PlayerRankingViewModel
+                {
+                    Name = p.Name,
+                    Level = p.Level,
+                    CurrentExperience = p.CurrentExperience
+                })
+                .ToListAsync();
+
+            using var package = new ExcelPackage();
+            var worksheet = package.Workbook.Worksheets.Add("Ranking Graczy");
+
+            worksheet.Cells[1, 1].Value = "Pozycja";
+            worksheet.Cells[1, 2].Value = "Nazwa Gracza";
+            worksheet.Cells[1, 3].Value = "Level";
+            worksheet.Cells[1, 4].Value = "Doœwiadczenie";
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                worksheet.Cells[i + 2, 1].Value = i + 1;
+                worksheet.Cells[i + 2, 2].Value = players[i].Name;
+                worksheet.Cells[i + 2, 3].Value = players[i].Level;
+                worksheet.Cells[i + 2, 4].Value = players[i].CurrentExperience;
+            }
+
+            var stream = new MemoryStream();
+            package.SaveAs(stream);
+            stream.Position = 0;
+
+            string fileName = $"Ranking_Graczy_{DateTime.Now:yyyyMMdd}.xlsx";
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
+
+        public async Task<IActionResult> ExportToPdf()
+        {
+            var players = await _context.Players
+                .OrderByDescending(p => p.Level)
+                .Select(p => new PlayerRankingViewModel
+                {
+                    Name = p.Name,
+                    Level = p.Level,
+                    CurrentExperience = p.CurrentExperience
+                })
+                .ToListAsync();
+
+            using var stream = new MemoryStream();
+            var document = new Document(PageSize.A4);
+            var writer = PdfWriter.GetInstance(document, stream);
+
+            document.Open();
+
+            var titleFont = FontFactory.GetFont(FontFactory.TIMES_ROMAN, 18);
+            document.Add(new Paragraph("Ranking Graczy", titleFont));
+            document.Add(new Paragraph(" "));
+
+            var table = new PdfPTable(4) { WidthPercentage = 100 };
+            table.AddCell("Pozycja");
+            table.AddCell("Nazwa Gracza");
+            table.AddCell("Level");
+            table.AddCell("Doœwiadczenie");
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                table.AddCell((i + 1).ToString());
+                table.AddCell(players[i].Name);
+                table.AddCell(players[i].Level.ToString());
+                table.AddCell(players[i].CurrentExperience.ToString());
+            }
+
+            document.Add(table);
+            document.Close();
+
+            string fileName = $"Ranking_Graczy_{DateTime.Now:yyyyMMdd}.pdf";
+            return File(stream.ToArray(), "application/pdf", fileName);
         }
 
         // ... inne akcje kontrolera

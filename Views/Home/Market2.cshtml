@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Market";
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-McKPkTZlVbBbG6O8oBNuAU4SVn/J5j7zBQq4DzjwqXPsjhUGz2/wHUL6gsuN5DAJ" crossorigin="anonymous">
+}
+<h2>Rynek Wymiany Zasobów</h2>
+
+<form id="exchangeForm" asp-action="Market2" method="post">
+    <label for="resourceType">Wybierz zasób:</label>
+    <select class="form-select" id="resourceType" name="resourceType">
+        <option value="Stone">Kamień (100 za 100 golda)</option>
+        <option value="Wood">Drewno (100 za 100 golda)</option>
+        <option value="Ore">Ruda (100 za 100 golda)</option>
+        <option value="Wheat">Pszenica (100 za 100 golda)</option>
+    </select>
+
+    <button class="btn btn-success" type="submit">Wymień</button>
+</form>
+<div id="message"></div>

@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Wsparcie Finansowe";
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+}
+
+<h2>Wyślij Wsparcie Finansowe</h2>
+
+<form id="supportForm" asp-action="SendSupport" method="post">
+    <div class="form-group">
+        <label for="recipientName">Wybierz odbiorcę:</label>
+        <select id="recipientName" name="recipientName" class="form-control" required>
+            <option value="">-- Wybierz gracza --</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="resourceType">Wybierz zasób:</label>
+        <select id="resourceType" name="resourceType" class="form-control">
+            <option value="Stone">Kamień</option>
+            <option value="Wood">Drewno</option>
+            <option value="Ore">Ruda</option>
+            <option value="Wheat">Pszenica</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="amount">Ilość:</label>
+        <input type="number" id="amount" name="amount" class="form-control" min="1" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Wyślij wsparcie</button>
+</form>
+
+<div id="message"></div>
+
+<script>
+    // Pobierz listę członków gildii
+    async function loadGuildMembers() {
+        const response = await fetch('/Market/GetGuildMembers');
+        const recipientSelect = document.getElementById("recipientName");
+
+        if (response.ok) {
+            const members = await response.json();
+            recipientSelect.innerHTML = '<option value="">-- Wybierz gracza --</option>';
+            members.forEach(member => {
+                const option = document.createElement("option");
+                option.value = member;
+                option.textContent = member;
+                recipientSelect.appendChild(option);
+            });
+        } else {
+            alert("Nie udało się pobrać listy członków gildii.");
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadGuildMembers);
+</script>
+
+
